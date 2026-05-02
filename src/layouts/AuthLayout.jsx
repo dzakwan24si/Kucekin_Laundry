@@ -1,29 +1,22 @@
 import { Outlet } from "react-router-dom";
 
 export default function AuthLayout() {
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-[#f4f9fd] font-poppins relative overflow-hidden">
-            {/* Ornamen Geometris Air/Gelembung di background */}
-            <div className="absolute top-[-10%] left-[-5%] w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
-            <div className="absolute bottom-[-10%] right-[-5%] w-96 h-96 bg-cyan-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-sky-50 to-cyan-100 font-poppins relative overflow-hidden p-4">
+      {/* Efek Cahaya Blur di Background */}
+      <div className="absolute top-10 left-10 w-72 h-72 bg-blue-200/50 rounded-full blur-3xl mix-blend-multiply animate-pulse"></div>
+      <div className="absolute bottom-10 right-10 w-96 h-96 bg-cyan-200/50 rounded-full blur-3xl mix-blend-multiply animate-pulse delay-1000"></div>
 
-            <div className="bg-white p-10 rounded-3xl shadow-xl w-full max-w-md relative z-10 border border-white/50 backdrop-blur-sm">
-                <div className="flex flex-col items-center justify-center mb-8">
-                    <div className="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-blue-500/30">
-                        <span className="text-3xl text-white">💧</span>
-                    </div>
-                    <h1 className="text-3xl font-extrabold text-gray-800 tracking-tight">
-                        Fresh<span className="text-blue-500">Laundry.</span>
-                    </h1>
-                    <p className="text-gray-400 text-sm mt-1">Sistem Manajemen Laundry Modern</p>
-                </div>
+      {/* Dekorasi Tetesan Air & Bintang Melayang */}
+      <div className="absolute top-1/4 right-1/4 w-8 h-12 bg-gradient-to-b from-blue-300 to-cyan-300 rounded-t-full rounded-b-full opacity-60 rotate-12 drop-shadow-lg blur-[1px]"></div>
+      <div className="absolute bottom-1/3 left-1/4 w-6 h-10 bg-gradient-to-b from-purple-200 to-blue-300 rounded-t-full rounded-b-full opacity-60 -rotate-12 drop-shadow-lg blur-[1px]"></div>
+      <div className="absolute bottom-1/4 right-1/3 text-amber-300 text-2xl animate-bounce">✨</div>
+      <div className="absolute top-1/3 left-1/3 text-amber-300 text-xl animate-pulse">✨</div>
 
-                <Outlet /> {/* Halaman Login/Register akan masuk ke sini */}
-
-                <p className="text-center text-xs text-gray-400 mt-8 font-medium">
-                    © 2025 FreshLaundry System. All rights reserved.
-                </p>
-            </div>
-        </div>
-    );
+      {/* Card Utama */}
+      <div className="bg-white/95 backdrop-blur-xl p-8 sm:p-10 rounded-[2.5rem] shadow-2xl shadow-blue-900/10 w-full max-w-[420px] relative z-10 border border-white">
+        <Outlet />
+      </div>
+    </div>
+  );
 }
