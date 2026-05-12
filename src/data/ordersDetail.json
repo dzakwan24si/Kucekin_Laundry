@@ -1,0 +1,26 @@
+[
+  {
+    "id": "FL-0015",
+    "date": "1 Mei 2026",
+    "customer": "Budi Santoso",
+    "phone": "081234567890",
+    "service": "Cuci Komplit (Kilat)",
+    "weight": "3.5 kg",
+    "status": "Diproses",
+    "total": "Rp 35.000",
+    "items": ["3 Kemeja", "2 Celana Jeans", "1 Jaket"],
+    "notes": "Tolong jangan disetrika terlalu panas di bagian kerah."
+  },
+  {
+    "id": "FL-0014",
+    "date": "1 Mei 2026",
+    "customer": "Siti Aminah",
+    "phone": "089876543210",
+    "service": "Setrika Saja",
+    "weight": "2.0 kg",
+    "status": "Selesai",
+    "total": "Rp 15.000",
+    "items": ["5 Kaos", "2 Rok"],
+    "notes": "Gunakan pewangi wangi lavender."
+  }
+]

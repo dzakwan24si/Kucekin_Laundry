@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Search, Filter, Plus, Edit, Trash2, Eye } from "lucide-react";
+import { Link } from "react-router-dom";
 
 // Dummy Data Pesanan Laundry
 const ordersData = [
@@ -87,9 +88,9 @@ export default function Pesanan() {
                   <td className="p-5 font-bold text-gray-800">{order.total}</td>
                   <td className="p-5">
                     <div className="flex items-center justify-center gap-2">
-                      <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Detail">
+                      <Link to={`/pesanan/${order.id}`} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors flex items-center" title="Detail">
                         <Eye size={18} />
-                      </button>
+                      </Link>
                       <button className="p-2 text-orange-500 hover:bg-orange-50 rounded-lg transition-colors" title="Edit">
                         <Edit size={18} />
                       </button>

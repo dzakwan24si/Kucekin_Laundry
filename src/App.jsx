@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
+const DetailPesanan = React.lazy(() => import("./pages/DetailPesanan"));
 const MainLayout = React.lazy(() => import("./layouts/MainLayout"));
 const Loading = React.lazy(() => import("./components/Loading"));
 const AuthLayout = React.lazy(() => import("./layouts/AuthLayout"));
@@ -21,6 +22,7 @@ export default function App() {
                     <Route path="/" element={<Beranda />} />
                     <Route path="/status" element={<CekStatus />} />
                     <Route path="/pesanan" element={<Pesanan />} />
+                    <Route path="/pesanan/:id" element={<DetailPesanan />} />
                     <Route path="/layanan" element={<Layanan />} />
                 </Route>
             </Routes>
