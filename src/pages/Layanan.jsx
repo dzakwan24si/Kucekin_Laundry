@@ -1,6 +1,10 @@
 import { Plus, Edit, Trash2, Shirt, Zap, Wind, Package } from "lucide-react";
 
-// Dummy Data Daftar Layanan/Pricelist
+// Import Komponen Reusable
+import PageHeader from "../components/PageHeader";
+import Button from "../components/Button";
+import Card from "../components/Card";
+
 const servicesData = [
   { id: 1, name: "Cuci Komplit (Reguler)", desc: "Cuci bersih, jemur, dan setrika rapi. Pilihan hemat untuk harian.", price: "Rp 6.000", unit: "/ kg", duration: "2 Hari", icon: Shirt, color: "bg-blue-100 text-blue-600" },
   { id: 2, name: "Cuci Komplit (Kilat)", desc: "Prioritas utama. Selesai di hari yang sama tanpa antre.", price: "Rp 12.000", unit: "/ kg", duration: "12 Jam", icon: Zap, color: "bg-amber-100 text-amber-600" },
@@ -10,29 +14,27 @@ const servicesData = [
 
 export default function Layanan() {
   return (
-    <div className="animate-fade-in font-poppins px-8 pb-8">
-      {/* Header Halaman */}
+    <div className="animate-fade-in font-poppins px-8 pb-8 pt-4">
+      
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800">Layanan & Harga</h1>
-          <p className="text-sm text-gray-400 mt-1">Atur daftar paket laundry beserta tarif dan estimasi waktu.</p>
-        </div>
-        <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold transition-all shadow-lg shadow-blue-600/30">
+        <PageHeader 
+          title="Layanan & Harga" 
+          subtitle="Atur daftar paket laundry beserta tarif dan estimasi waktu." 
+        />
+        <Button type="primary" className="flex items-center gap-2">
           <Plus size={20} /> Tambah Layanan
-        </button>
+        </Button>
       </div>
 
-      {/* Grid Layanan */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {servicesData.map((service) => {
           const Icon = service.icon;
           return (
-            <div key={service.id} className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
+            <Card key={service.id} className="hover:shadow-xl transition-all duration-300 group">
               <div className="flex justify-between items-start mb-4">
                 <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${service.color} group-hover:scale-110 transition-transform`}>
                   <Icon size={28} />
                 </div>
-                {/* Tombol Aksi tersembunyi, muncul saat di-hover */}
                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button className="p-2 bg-gray-50 hover:bg-blue-50 text-gray-400 hover:text-blue-600 rounded-lg transition-colors">
                     <Edit size={16} />
@@ -59,7 +61,7 @@ export default function Layanan() {
                   <p className="text-xs font-bold text-gray-600">⏱ {service.duration}</p>
                 </div>
               </div>
-            </div>
+            </Card>
           );
         })}
       </div>

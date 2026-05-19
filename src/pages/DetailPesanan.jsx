@@ -1,17 +1,20 @@
 import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { ArrowLeft, User, Phone, MapPin, Receipt, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, User, Phone, Receipt, CheckCircle2 } from "lucide-react";
 import ordersDetail from "../data/ordersDetail.json";
 
+// Import Komponen Reusable
+import Card from "../components/Card";
+import Badge from "../components/Badge";
+import Button from "../components/Button";
+import LoadingSpinner from "../components/LoadingSpinner";
+
 export default function DetailPesanan() {
-    // 1. Ambil ID dari URL (Misal: FL-0015)
     const { id } = useParams();
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // 2. Simulasi Fetch Data menggunakan useEffect
     useEffect(() => {
-        // Simulasi delay jaringan agar terasa seperti API sungguhan
         setTimeout(() => {
             const foundOrder = ordersDetail.find(item => item.id === id);
             setOrder(foundOrder);
@@ -19,7 +22,7 @@ export default function DetailPesanan() {
         }, 500); 
     }, [id]);
 
-    if (loading) return <div className="p-8 text-center text-gray-500 font-medium animate-pulse">Memuat detail pesanan...</div>;
+    if (loading) return <div className="mt-20"><LoadingSpinner /></div>;
     
     if (!order) return (
         <div className="p-8 text-center">
@@ -47,7 +50,7 @@ export default function DetailPesanan() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Info Pelanggan & Status */}
                 <div className="lg:col-span-2 space-y-6">
-                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <Card>
                         <h2 className="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Informasi Pelanggan</h2>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="flex items-start gap-3">
@@ -65,9 +68,9 @@ export default function DetailPesanan() {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </Card>
 
-                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <Card>
                         <h2 className="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Rincian Cucian</h2>
                         <ul className="space-y-2 mb-4">
                             {order.items.map((item, index) => (
@@ -80,11 +83,11 @@ export default function DetailPesanan() {
                             <p className="text-xs font-bold text-orange-800 uppercase mb-1">Catatan Khusus:</p>
                             <p className="text-sm text-orange-600">{order.notes}</p>
                         </div>
-                    </div>
+                    </Card>
                 </div>
 
                 {/* Ringkasan Biaya */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-fit sticky top-6">
+                <Card className="h-fit sticky top-6">
                     <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
                         <Receipt size={20} className="text-blue-600" /> Ringkasan Tagihan
                     </h2>
@@ -97,19 +100,19 @@ export default function DetailPesanan() {
                             <span>Berat/Jumlah</span>
                             <span className="font-semibold text-gray-800">{order.weight}</span>
                         </div>
-                        <div className="flex justify-between">
+                        <div className="flex justify-between items-center">
                             <span>Status</span>
-                            <span className="font-bold text-amber-500 bg-amber-50 px-2 py-0.5 rounded">{order.status}</span>
+                            <Badge status={order.status} />
                         </div>
                     </div>
                     <div className="flex justify-between items-end">
                         <span className="text-gray-500 font-semibold">Total Bayar</span>
                         <span className="text-3xl font-black text-blue-600">{order.total}</span>
                     </div>
-                    <button className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-blue-600/30">
+                    <Button type="primary" className="w-full mt-6">
                         Cetak Nota
-                    </button>
-                </div>
+                    </Button>
+                </Card>
             </div>
         </div>
     );
