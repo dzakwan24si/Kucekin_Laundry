@@ -9,6 +9,7 @@ const Layanan = React.lazy(() => import("./pages/Layanan"));
 const Login = React.lazy(() => import("./pages/auth/Login"));
 const Beranda = React.lazy(() => import("./pages/Beranda"));
 const CekStatus = React.lazy(() => import("./pages/CekStatus"));
+const Components = React.lazy(() => import("./pages/Components"));
 
 export default function App() {
     return (
@@ -24,6 +25,7 @@ export default function App() {
                     <Route path="/pesanan" element={<Pesanan />} />
                     <Route path="/pesanan/:id" element={<DetailPesanan />} />
                     <Route path="/layanan" element={<Layanan />} />
+                    <Route path="/components" element={<Components />} />
                 </Route>
             </Routes>
         </Suspense>
