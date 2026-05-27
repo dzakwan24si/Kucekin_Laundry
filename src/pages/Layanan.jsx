@@ -1,9 +1,21 @@
 import { Plus, Edit, Trash2, Shirt, Zap, Wind, Package } from "lucide-react";
 
-// Import Komponen Reusable
+// Import Komponen Reusable buatanmu
 import PageHeader from "../components/PageHeader";
 import Button from "../components/Button";
 import Card from "../components/Card";
+import InputField from "../components/InputField";
+
+// Import Komponen Shadcn
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const servicesData = [
   { id: 1, name: "Cuci Komplit (Reguler)", desc: "Cuci bersih, jemur, dan setrika rapi. Pilihan hemat untuk harian.", price: "Rp 6.000", unit: "/ kg", duration: "2 Hari", icon: Shirt, color: "bg-blue-100 text-blue-600" },
@@ -21,9 +33,40 @@ export default function Layanan() {
           title="Layanan & Harga" 
           subtitle="Atur daftar paket laundry beserta tarif dan estimasi waktu." 
         />
-        <Button type="primary" className="flex items-center gap-2">
-          <Plus size={20} /> Tambah Layanan
-        </Button>
+        
+        {/* IMPLEMENTASI SHADCN DIALOG (MODAL) */}
+        <Dialog>
+          <DialogTrigger asChild>
+            {/* Tombol yang sama, tapi sekarang memicu Pop-up */}
+            <div>
+              <Button type="primary" className="flex items-center gap-2 cursor-pointer">
+                <Plus size={20} /> Tambah Layanan
+              </Button>
+            </div>
+          </DialogTrigger>
+          
+          <DialogContent className="sm:max-w-[425px] font-poppins rounded-2xl">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold text-gray-800">Tambah Layanan Baru</DialogTitle>
+              <DialogDescription className="text-sm text-gray-500">
+                Masukkan detail paket layanan laundry baru di sini. Klik simpan jika sudah selesai.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="grid gap-5 py-4">
+              <InputField label="Nama Layanan" placeholder="Contoh: Cuci Sepatu Premium" />
+              <div className="grid grid-cols-2 gap-4">
+                <InputField label="Tarif (Rp)" type="number" placeholder="Contoh: 35000" />
+                <InputField label="Satuan" placeholder="Contoh: / pasang" />
+              </div>
+              <InputField label="Estimasi Waktu" placeholder="Contoh: 3 Hari" />
+            </div>
+            
+            <DialogFooter>
+              <Button type="primary" className="w-full">Simpan Layanan</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
