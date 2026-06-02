@@ -1,9 +1,8 @@
 import { useParams, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { ArrowLeft, User, Phone, Receipt, CheckCircle2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react"; 
+import { ArrowLeft, User, Phone, Receipt, CheckCircle2, Printer } from "lucide-react";
 import ordersDetail from "../data/ordersDetail.json";
 
-// Import Komponen Reusable
 import Card from "../components/Card";
 import Badge from "../components/Badge";
 import Button from "../components/Button";
@@ -13,6 +12,9 @@ export default function DetailPesanan() {
     const { id } = useParams();
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
+    
+    // 2️⃣ Inisialisasi useRef untuk komponen cetak nota
+    const notaRef = useRef(null);
 
     useEffect(() => {
         setTimeout(() => {
@@ -21,6 +23,31 @@ export default function DetailPesanan() {
             setLoading(false);
         }, 500); 
     }, [id]);
+
+    // 3️⃣ Fungsi untuk mencetak nota menggunakan useRef
+    const handleCetakNota = () => {
+        // Mengambil isi HTML dari elemen yang direferensikan oleh notaRef
+        const printContent = notaRef.current.innerHTML;
+        const originalContent = document.body.innerHTML;
+
+        // Mengganti seluruh isi halaman web sementara dengan isi nota saja
+        document.body.innerHTML = `
+            <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 400px; margin: auto;">
+                <h2 style="text-align: center; margin-bottom: 20px;">Nota FreshLaundry</h2>
+                ${printContent}
+                <hr style="margin-top: 20px; border-top: 1px dashed #ccc;" />
+                <p style="text-align: center; font-size: 12px; color: #666;">Terima kasih telah mencuci di FreshLaundry!</p>
+            </div>
+        `;
+
+        // Membuka jendela print bawaan browser
+        window.print();
+
+        // Mengembalikan tampilan web ke kondisi semula setelah jendela print ditutup
+        document.body.innerHTML = originalContent;
+        // Reload diperlukan agar React meng-attach ulang event listener (karena kita me-replace body HTML)
+        window.location.reload(); 
+    };
 
     if (loading) return <div className="mt-20"><LoadingSpinner /></div>;
     
@@ -34,7 +61,6 @@ export default function DetailPesanan() {
 
     return (
         <div className="animate-fade-in font-poppins px-8 pb-8 pt-4">
-            {/* Header Detail */}
             <div className="flex items-center gap-4 mb-8">
                 <Link to="/pesanan" className="p-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-all text-gray-500">
                     <ArrowLeft size={20} />
@@ -48,7 +74,6 @@ export default function DetailPesanan() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Info Pelanggan & Status */}
                 <div className="lg:col-span-2 space-y-6">
                     <Card>
                         <h2 className="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Informasi Pelanggan</h2>
@@ -86,34 +111,45 @@ export default function DetailPesanan() {
                     </Card>
                 </div>
 
-                {/* Ringkasan Biaya */}
-                <Card className="h-fit sticky top-6">
-                    <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <Receipt size={20} className="text-blue-600" /> Ringkasan Tagihan
-                    </h2>
-                    <div className="space-y-3 text-sm text-gray-600 mb-6 border-b pb-4">
-                        <div className="flex justify-between">
-                            <span>Layanan</span>
-                            <span className="font-semibold text-gray-800">{order.service}</span>
+                <div className="h-fit sticky top-6">
+                    {/* 4️⃣ Hubungkan ref ke dalam Card pembungkus konten tagihan yang ingin dicetak */}
+                    <div ref={notaRef} className="bg-white p-6 rounded-t-2xl border border-b-0 border-gray-100 shadow-sm">
+                        <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <Receipt size={20} className="text-blue-600" /> Ringkasan Tagihan
+                        </h2>
+                        
+                        <div className="space-y-3 text-sm text-gray-600 mb-6 border-b pb-4">
+                            <div className="flex justify-between">
+                                <span>No. Resi</span>
+                                <span className="font-semibold text-gray-800">{order.id}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span>Layanan</span>
+                                <span className="font-semibold text-gray-800">{order.service}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span>Berat/Jumlah</span>
+                                <span className="font-semibold text-gray-800">{order.weight}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span>Status</span>
+                                <Badge status={order.status} />
+                            </div>
                         </div>
-                        <div className="flex justify-between">
-                            <span>Berat/Jumlah</span>
-                            <span className="font-semibold text-gray-800">{order.weight}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                            <span>Status</span>
-                            <Badge status={order.status} />
+                        <div className="flex justify-between items-end">
+                            <span className="text-gray-500 font-semibold">Total Bayar</span>
+                            <span className="text-3xl font-black text-blue-600">{order.total}</span>
                         </div>
                     </div>
-                    <div className="flex justify-between items-end">
-                        <span className="text-gray-500 font-semibold">Total Bayar</span>
-                        <span className="text-3xl font-black text-blue-600">{order.total}</span>
+                    
+                    {/* Tombol pemicu ditaruh di luar notaRef agar tombolnya sendiri tidak ikut tercetak */}
+                    <div className="bg-white p-6 rounded-b-2xl border border-t-0 border-gray-100 shadow-sm pt-0">
+                        <Button type="primary" onClick={handleCetakNota} className="w-full flex items-center justify-center gap-2">
+                            <Printer size={18} /> Cetak Nota
+                        </Button>
                     </div>
-                    <Button type="primary" className="w-full mt-6">
-                        Cetak Nota
-                    </Button>
-                </Card>
+                </div>
             </div>
         </div>
     );
-} 
+}
