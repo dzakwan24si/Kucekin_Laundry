@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, ShoppingCart, ListOrdered, Users, Package, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, ShoppingCart, ListOrdered, Users, Package, Settings, LogOut, FileUser} from "lucide-react";
 
 export default function Sidebar() {
   // Disesuaikan dengan kebutuhan fitur manajemen laundry
@@ -9,6 +9,7 @@ export default function Sidebar() {
     { icon: ListOrdered, label: "Layanan", path: "/layanan" },
     { icon: Users, label: "Pelanggan", path: "/pelanggan" },
     { icon: Package, label: "Inventori", path: "/inventori" },
+    { icon: FileUser, label: "Data Karyawan", path: "/karyawan" },
     { icon: Settings, label: "Pengaturan", path: "/pengaturan" },
   ];
 

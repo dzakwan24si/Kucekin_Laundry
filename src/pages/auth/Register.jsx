@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { authAPI } from "@/services/authAPI"; 
 
-export default function Login() {
+export default function Register() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   
-  // Ubah username menjadi email untuk Supabase
-  const [dataForm, setDataForm] = useState({ email: "", password: "" });
+  const [dataForm, setDataForm] = useState({ fullname: "", email: "", password: "" });
 
   const handleChange = (evt) => {
     const { name, value } = evt.target;
@@ -21,16 +21,17 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setSuccess("");
 
     try {
-        // Cek ke Supabase menggunakan authAPI
-        const user = await authAPI.loginUser(dataForm.email, dataForm.password);
+        await authAPI.registerUser(dataForm);
+        setSuccess("Pendaftaran berhasil! Mengalihkan ke halaman login...");
         
-        // Simpan sesi
-        localStorage.setItem("user", JSON.stringify(user));
-        navigate("/");
+        setTimeout(() => {
+            navigate("/login");
+        }, 2000);
     } catch (err) {
-        setError(err.message || "Email atau password salah!");
+        setError(err.message || "Terjadi kesalahan saat mendaftar.");
     } finally {
         setLoading(false);
     }
@@ -48,21 +49,43 @@ export default function Login() {
         </p>
       </div>
 
-      <h2 className="text-2xl font-bold text-white mt-8 mb-2 tracking-wide">LOGIN</h2>
+      <h2 className="text-2xl font-bold text-white mt-8 mb-2 tracking-wide">REGISTER</h2>
       <p className="text-sm text-gray-300 mb-8 text-center">
-        Semua urusan cucianmu, beres di satu tempat..!
+        Daftarkan akun staf / kasir baru
       </p>
 
-      {/* Pesan Error */}
+      {/* Pesan Error & Success */}
       {error && (
         <div className="w-full bg-red-500/20 border border-red-500/50 text-red-200 p-3 rounded-xl text-xs mb-5 flex items-center font-medium backdrop-blur-sm">
           <span className="mr-2">⚠️</span> {error}
         </div>
       )}
+      {success && (
+        <div className="w-full bg-green-500/20 border border-green-500/50 text-green-200 p-3 rounded-xl text-xs mb-5 flex items-center font-medium backdrop-blur-sm">
+          <span className="mr-2">✅</span> {success}
+        </div>
+      )}
 
-      {/* Form Login */}
-      <form onSubmit={handleSubmit} className="w-full space-y-5">
-        {/* Input Email (Pengganti Username) */}
+      {/* Form Register */}
+      <form onSubmit={handleSubmit} className="w-full space-y-4">
+        
+        {/* Input Nama Lengkap */}
+        <div className="space-y-1.5">
+          <label className="block text-xs font-medium text-gray-200 pl-1">Nama Lengkap</label>
+          <div className="relative">
+            <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={16} strokeWidth={2.5} />
+            <input
+              type="text"
+              name="fullname"
+              onChange={handleChange}
+              required
+              className="w-full pl-11 pr-4 py-3.5 bg-[#e2e2e2] text-gray-900 placeholder-gray-500 rounded-2xl text-sm outline-none focus:ring-4 focus:ring-blue-500/30 transition-all font-medium"
+              placeholder="Contoh: Budi Santoso"
+            />
+          </div>
+        </div>
+
+        {/* Input Email */}
         <div className="space-y-1.5">
           <label className="block text-xs font-medium text-gray-200 pl-1">Email</label>
           <div className="relative">
@@ -73,7 +96,7 @@ export default function Login() {
               onChange={handleChange}
               required
               className="w-full pl-11 pr-4 py-3.5 bg-[#e2e2e2] text-gray-900 placeholder-gray-500 rounded-2xl text-sm outline-none focus:ring-4 focus:ring-blue-500/30 transition-all font-medium"
-              placeholder="Enter your Email"
+              placeholder="budi@laundry.com"
             />
           </div>
         </div>
@@ -89,7 +112,7 @@ export default function Login() {
               onChange={handleChange}
               required
               className="w-full pl-11 pr-12 py-3.5 bg-[#e2e2e2] text-gray-900 placeholder-gray-500 rounded-2xl text-sm outline-none focus:ring-4 focus:ring-blue-500/30 transition-all font-medium"
-              placeholder="Enter your Password"
+              placeholder="Minimal 6 karakter"
             />
             <button
               type="button"
@@ -101,33 +124,22 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Remember Me & Forget Password */}
-        <div className="flex items-center justify-between pt-2 px-1">
-          <label className="flex items-center text-xs text-gray-300 hover:text-white cursor-pointer transition-colors">
-            <input type="checkbox" className="mr-2 rounded-sm border-gray-400 bg-transparent" />
-            Remember me
-          </label>
-          <a href="#" className="text-xs text-gray-300 hover:text-white transition-colors">
-            Forget Password?
-          </a>
-        </div>
-
-        {/* Tombol Login */}
+        {/* Tombol Register */}
         <button
           type="submit"
-          disabled={loading}
-          className={`w-full py-4 mt-2 rounded-2xl text-sm font-bold tracking-wide transition-all ${
+          disabled={loading || success !== ""}
+          className={`w-full py-4 mt-4 rounded-2xl text-sm font-bold tracking-wide transition-all ${
             loading 
               ? 'bg-slate-700 text-slate-400 cursor-not-allowed' 
               : "bg-blue-800 text-white shadow-lg shadow-blue-800/30 hover:-translate-y-0.5"
           }`}
         >
-          {loading ? "Sedang Memproses..." : "Login"}
+          {loading ? "Menyimpan Data..." : "Daftar Akun"}
         </button>
-        
-        {/* Link Pendaftaran Karyawan Baru */}
+
+        {/* Link Kembali ke Login */}
         <p className="text-center text-xs text-gray-300 mt-6">
-          Belum punya akun staf? <Link to="/register" className="text-blue-400 font-bold hover:text-blue-300 transition-colors">Daftar di sini</Link>
+          Sudah punya akun? <Link to="/login" className="text-blue-400 font-bold hover:text-blue-300 transition-colors">Login di sini</Link>
         </p>
       </form>
     </div>

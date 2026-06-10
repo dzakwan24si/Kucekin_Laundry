@@ -1,5 +1,7 @@
 import React, { Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
+const Karyawan = React.lazy(() => import("./pages/Karyawan"));
+const Register = React.lazy(() => import("./pages/auth/Register"));
 const Pelanggan = React.lazy(() => import("./pages/Pelanggan"));
 const DetailPesanan = React.lazy(() => import("./pages/DetailPesanan"));
 const MainLayout = React.lazy(() => import("./layouts/MainLayout"));
@@ -17,6 +19,7 @@ export default function App() {
         <Suspense fallback={<Loading />}>
             <Routes>
                 <Route element={<AuthLayout />}>
+                <Route path="/register" element={<Register />} />
                     <Route path="/login" element={<Login />} />
                 </Route>
 
@@ -28,6 +31,7 @@ export default function App() {
                     <Route path="/layanan" element={<Layanan />} />
                     <Route path="/components" element={<Components />} />
                     <Route path="/pelanggan" element={<Pelanggan />} />
+                    <Route path="/karyawan" element={<Karyawan />} />
                 </Route>
             </Routes>
         </Suspense>
