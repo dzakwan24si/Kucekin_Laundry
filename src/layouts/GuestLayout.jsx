@@ -4,11 +4,9 @@ import Footer from "../components/guest/Footer";
 
 const GuestLayout = () => {
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-800">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-800 flex flex-col justify-between">
       <Navbar />
-      
-      {/* Konten halaman (Hero, Services, dll) akan dirender di dalam tag main ini */}
-      <main className="pt-20">
+      <main className="w-full flex-grow">
         <Outlet />
       </main>
 

@@ -5,16 +5,18 @@ const Navbar = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm px-6 md:px-12 h-20 flex items-center justify-between">
-      {/* Logo */}
-      <div className="flex items-center gap-2">
-        <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-bold">
-          Q
-        </div>
-        <span className="text-xl font-extrabold text-slate-900">Kucek.In</span>
-      </div>
+    <nav className="fixed top-4 left-4 right-4 max-w-6xl mx-auto z-50 bg-white/90 backdrop-blur-md shadow-md border border-slate-100 rounded-full px-6 md:px-8 h-16 flex items-center justify-between">
+      
+      {/* KIRI: Logo yang sudah menyatu dengan teks nama */}
+      <Link to="/" className="flex items-center">
+        <img 
+          src="/public/img/LogoKucekinVertical.png"
+          alt="Logo Kucekin" 
+          className="h-10 w-auto object-contain" 
+        />
+      </Link>
 
-      {/* Desktop Menu */}
+      {/* TENGAH: Desktop Menu */}
       <div className="hidden md:flex items-center gap-8">
         {['Beranda', 'Layanan', 'Harga', 'Lokasi', 'Blog'].map((item) => (
           <a
@@ -27,10 +29,13 @@ const Navbar = () => {
         ))}
       </div>
 
-      {/* Button Contact */}
-      <button className="hidden md:block bg-slate-900 hover:bg-slate-800 text-white rounded-full px-6 py-2.5 text-sm font-semibold transition-all">
-        Login
-      </button>
+      {/* KANAN: Tombol Masuk ke Halaman Login */}
+      <Link 
+        to="/login" 
+        className="hidden md:block bg-slate-900 hover:bg-slate-800 text-white rounded-full px-6 py-2 text-sm font-semibold transition-all text-center shadow-sm"
+      >
+        Masuk
+      </Link>
 
       {/* Mobile Menu Toggle */}
       <button
@@ -46,15 +51,24 @@ const Navbar = () => {
 
       {/* Mobile Nav Dropdown */}
       {mobileMenu && (
-        <div className="absolute top-20 left-0 right-0 bg-white shadow-lg p-6 flex flex-col gap-4 md:hidden border-t border-gray-100">
+        <div className="absolute top-20 left-0 right-0 bg-white/95 backdrop-blur-md shadow-lg p-6 flex flex-col gap-4 md:hidden border border-slate-100 rounded-3xl mx-2">
           {['Beranda', 'Layanan', 'Harga', 'Lokasi', 'Blog'].map((item) => (
-            <a key={item} href={`#${item.toLowerCase()}`} className="text-slate-700 font-medium py-2">
+            <a 
+              key={item} 
+              href={`#${item.toLowerCase()}`} 
+              onClick={() => setMobileMenu(false)}
+              className="text-slate-700 font-medium py-1 px-3 hover:bg-slate-50 rounded-xl transition-colors"
+            >
               {item}
             </a>
           ))}
-          <button className="bg-slate-900 text-white rounded-full px-6 py-3 text-sm font-semibold mt-2">
-            Hubungi Kami
-          </button>
+          <Link 
+            to="/login"
+            onClick={() => setMobileMenu(false)}
+            className="bg-slate-900 text-white rounded-full px-6 py-2.5 text-sm font-semibold mt-2 text-center shadow-sm"
+          >
+            Masuk
+          </Link>
         </div>
       )}
     </nav>
