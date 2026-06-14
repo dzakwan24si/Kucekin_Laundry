@@ -10,13 +10,13 @@ const GuestLayout = React.lazy(() => import("./layouts/GuestLayout"));
 const Loading = React.lazy(() => import("./components/Loading"));
 
 // === 3. IMPORTS GUEST / PUBLIC PAGES ===
-const LandingPage = React.lazy(() => import("./pages/LandingPage"));
-const Pemesanan = React.lazy(() => import("./pages/Pemesanan")); 
-const CekStatus = React.lazy(() => import("./pages/CekStatus"));
+const LandingPage = React.lazy(() => import("./pages/guest/LandingPage"));
+const Pemesanan = React.lazy(() => import("./pages/guest/Pemesanan")); 
+const CekStatus = React.lazy(() => import("./pages/guest/CekStatus"));
 
 // === 4. IMPORTS AUTH PAGES (Dari Master) ===
 const Login = React.lazy(() => import("./pages/auth/Login"));
-const Register = React.lazy(() => import("./pages/auth/Register")); // Tergabung dari master
+const Register = React.lazy(() => import("./pages/auth/Register"));
 
 // === 5. IMPORTS ADMIN PAGES (Dari Master & GuestPage) ===
 const Beranda = React.lazy(() => import("./pages/Beranda"));
@@ -25,7 +25,7 @@ const DetailPesanan = React.lazy(() => import("./pages/DetailPesanan"));
 const Layanan = React.lazy(() => import("./pages/Layanan"));
 const Pelanggan = React.lazy(() => import("./pages/Pelanggan"));
 const Components = React.lazy(() => import("./pages/Components"));
-const Karyawan = React.lazy(() => import("./pages/Karyawan")); // Tergabung dari master
+const Karyawan = React.lazy(() => import("./pages/Karyawan")); 
 
 export default function App() {
     return (
