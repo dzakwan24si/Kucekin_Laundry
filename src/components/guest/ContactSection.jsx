@@ -5,7 +5,7 @@ const ContactSection = () => {
   const [form, setForm] = useState({ name: '', email: '', phone: '', address: '', message: '' });
 
   return (
-    <section id="lokasi" className="py-20 px-6 bg-slate-50 text-center overflow-hidden">
+    <section id="kontak" className="py-20 px-6 bg-slate-50 text-center overflow-hidden">
       
       {/* Header Animasi Meluncur Ke Atas */}
       <motion.h2 

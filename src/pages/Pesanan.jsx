@@ -90,7 +90,7 @@ export default function Pesanan() {
                   <td className="p-5 font-bold text-gray-800">{order.total}</td>
                   <td className="p-5">
                     <div className="flex items-center justify-center gap-2">
-                      <Link to={`/pesanan/${order.id}`} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors flex items-center" title="Detail">
+                      <Link to={`/admin/pesanan/${order.id}`} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors flex items-center" title="Detail">
                         <Eye size={18} />
                       </Link>
                       <button className="p-2 text-orange-500 hover:bg-orange-50 rounded-lg transition-colors" title="Edit"><Edit size={18} /></button>
