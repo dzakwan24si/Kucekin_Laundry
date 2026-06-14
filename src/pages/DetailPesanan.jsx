@@ -62,7 +62,7 @@ export default function DetailPesanan() {
     return (
         <div className="animate-fade-in font-poppins px-8 pb-8 pt-4">
             <div className="flex items-center gap-4 mb-8">
-                <Link to="/pesanan" className="p-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-all text-gray-500">
+                <Link to="/admin/pesanan" className="p-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-all text-gray-500">
                     <ArrowLeft size={20} />
                 </Link>
                 <div>
