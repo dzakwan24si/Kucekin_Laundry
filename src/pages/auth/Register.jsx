@@ -41,9 +41,11 @@ export default function Register() {
     <div className="flex flex-col items-center animate-fade-in">
       {/* Logo Area */}
       <div className="mb-2 text-center">
-        <h1 className="text-3xl font-bold tracking-widest text-white">
-          Kucek<span className="text-blue-500">in</span>
-        </h1>
+      <img
+          src="/img/LogoKucekinVertical.png"
+          alt="Logo Kucekin"
+          className="h-14 w-auto object-contain"
+        />
         <p className="text-[9px] tracking-[0.2em] text-gray-300 uppercase mt-1">
           Management System
         </p>

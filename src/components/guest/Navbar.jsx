@@ -61,7 +61,7 @@ const Navbar = () => {
             {/* Wadah gambar dengan transisi interaktif asli */}
             <div className="group-hover:scale-105 group-hover:rotate-3 transition-transform duration-300">
               <img
-                src="/public/img/LogoKucekinVertical.png"
+                src="/img/LogoKucekinVertical.png"
                 alt="Logo Kucekin"
                 className="h-10 w-auto object-contain"
               />

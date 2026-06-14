@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { authAPI } from "@/services/authAPI"; 
+import { authAPI } from "@/services/authAPI";
 
 export default function Login() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  
+
   // Ubah username menjadi email untuk Supabase
   const [dataForm, setDataForm] = useState({ email: "", password: "" });
 
@@ -23,16 +23,16 @@ export default function Login() {
     setError("");
 
     try {
-        // Cek ke Supabase menggunakan authAPI
-        const user = await authAPI.loginUser(dataForm.email, dataForm.password);
-        
-        // Simpan sesi
-        localStorage.setItem("user", JSON.stringify(user));
-        navigate("/");
+      // Cek ke Supabase menggunakan authAPI
+      const user = await authAPI.loginUser(dataForm.email, dataForm.password);
+
+      // Simpan sesi
+      localStorage.setItem("user", JSON.stringify(user));
+      navigate("/admin");
     } catch (err) {
-        setError(err.message || "Email atau password salah!");
+      setError(err.message || "Email atau password salah!");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -40,15 +40,19 @@ export default function Login() {
     <div className="flex flex-col items-center animate-fade-in">
       {/* Logo Area */}
       <div className="mb-2 text-center">
-        <h1 className="text-3xl font-bold tracking-widest text-white">
-          Kucek<span className="text-blue-500">in</span>
-        </h1>
+        <img
+          src="/img/LogoKucekinVertical.png"
+          alt="Logo Kucekin"
+          className="h-14 w-auto object-contain"
+        />
         <p className="text-[9px] tracking-[0.2em] text-gray-300 uppercase mt-1">
           Management System
         </p>
       </div>
 
-      <h2 className="text-2xl font-bold text-white mt-8 mb-2 tracking-wide">LOGIN</h2>
+      <h2 className="text-2xl font-bold text-white mt-8 mb-2 tracking-wide">
+        LOGIN
+      </h2>
       <p className="text-sm text-gray-300 mb-8 text-center">
         Semua urusan cucianmu, beres di satu tempat..!
       </p>
@@ -64,9 +68,15 @@ export default function Login() {
       <form onSubmit={handleSubmit} className="w-full space-y-5">
         {/* Input Email (Pengganti Username) */}
         <div className="space-y-1.5">
-          <label className="block text-xs font-medium text-gray-200 pl-1">Email</label>
+          <label className="block text-xs font-medium text-gray-200 pl-1">
+            Email
+          </label>
           <div className="relative">
-            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={16} strokeWidth={2.5} />
+            <Mail
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
+              size={16}
+              strokeWidth={2.5}
+            />
             <input
               type="email"
               name="email"
@@ -80,9 +90,15 @@ export default function Login() {
 
         {/* Input Password */}
         <div className="space-y-1.5">
-          <label className="block text-xs font-medium text-gray-200 pl-1">Password</label>
+          <label className="block text-xs font-medium text-gray-200 pl-1">
+            Password
+          </label>
           <div className="relative">
-            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={16} strokeWidth={2.5} />
+            <Lock
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
+              size={16}
+              strokeWidth={2.5}
+            />
             <input
               type={showPassword ? "text" : "password"}
               name="password"
@@ -104,10 +120,16 @@ export default function Login() {
         {/* Remember Me & Forget Password */}
         <div className="flex items-center justify-between pt-2 px-1">
           <label className="flex items-center text-xs text-gray-300 hover:text-white cursor-pointer transition-colors">
-            <input type="checkbox" className="mr-2 rounded-sm border-gray-400 bg-transparent" />
+            <input
+              type="checkbox"
+              className="mr-2 rounded-sm border-gray-400 bg-transparent"
+            />
             Remember me
           </label>
-          <a href="#" className="text-xs text-gray-300 hover:text-white transition-colors">
+          <a
+            href="#"
+            className="text-xs text-gray-300 hover:text-white transition-colors"
+          >
             Forget Password?
           </a>
         </div>
@@ -117,17 +139,23 @@ export default function Login() {
           type="submit"
           disabled={loading}
           className={`w-full py-4 mt-2 rounded-2xl text-sm font-bold tracking-wide transition-all ${
-            loading 
-              ? 'bg-slate-700 text-slate-400 cursor-not-allowed' 
+            loading
+              ? "bg-slate-700 text-slate-400 cursor-not-allowed"
               : "bg-blue-800 text-white shadow-lg shadow-blue-800/30 hover:-translate-y-0.5"
           }`}
         >
           {loading ? "Sedang Memproses..." : "Login"}
         </button>
-        
+
         {/* Link Pendaftaran Karyawan Baru */}
         <p className="text-center text-xs text-gray-300 mt-6">
-          Belum punya akun staf? <Link to="/register" className="text-blue-400 font-bold hover:text-blue-300 transition-colors">Daftar di sini</Link>
+          Belum punya akun staf?{" "}
+          <Link
+            to="/register"
+            className="text-blue-400 font-bold hover:text-blue-300 transition-colors"
+          >
+            Daftar di sini
+          </Link>
         </p>
       </form>
     </div>
