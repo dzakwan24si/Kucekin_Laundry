@@ -8,7 +8,6 @@ export default function Sidebar() {
     { icon: ShoppingCart, label: "Pesanan", path: "/admin/pesanan" },
     { icon: ListOrdered, label: "Layanan", path: "/admin/layanan" },
     { icon: Users, label: "Pelanggan", path: "/admin/pelanggan" },
-    { icon: Package, label: "Inventori", path: "/admin/inventori" },
     { icon: FileUser, label: "Data Karyawan", path: "/admin/karyawan" },
     { icon: Settings, label: "Pengaturan", path: "/admin/pengaturan" },
   ];

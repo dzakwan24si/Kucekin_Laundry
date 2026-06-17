@@ -118,13 +118,13 @@ const Navbar = () => {
           {/* === KANAN: ACTION BUTTONS === */}
           <div className="hidden lg:flex items-center gap-4 shrink-0">
             <Link
-              to="/login"
+              to="/admin/login"
               className="text-[13px] font-semibold text-slate-600 hover:text-orange-500 transition-colors"
             >
               Masuk
             </Link>
             <Link
-              to="/pesan"
+              to="/login"
               className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-full text-xs font-bold transition-all shadow-md flex items-center gap-2 group"
             >
               Pesan Sekarang

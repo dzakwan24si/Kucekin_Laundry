@@ -29,7 +29,7 @@ const HeroSection = () => {
           {/* Tombol Aksi */}
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-8">
             <Link
-              to="/pesan"
+              to="/login"
               className="bg-slate-900 hover:bg-slate-800 text-white rounded-full px-7 py-3.5 text-sm font-semibold flex items-center gap-2 transition-all shadow-md"
             >
               Mulai Sekarang

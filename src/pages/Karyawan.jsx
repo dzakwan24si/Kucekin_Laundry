@@ -20,12 +20,18 @@ export default function Karyawan() {
         role: "Staf"
     });
 
-    // Read: Ambil data dari Supabase
+    // Read: Ambil data dari Supabase (Hanya untuk internal)
     const loadUsers = async () => {
         try {
             setLoading(true);
             const data = await authAPI.getUsers();
-            setUsers(data);
+            
+            // LOGIKA PEMISAHAN ROLE: Filter hanya untuk internal Kucekin
+            const karyawanOnly = data.filter(user => 
+                user.role === 'Admin' || user.role === 'Staf'
+            );
+            
+            setUsers(karyawanOnly);
         } catch (err) {
             setError("Gagal memuat data karyawan.");
         } finally {
