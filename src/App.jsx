@@ -36,6 +36,7 @@ const Pelanggan = React.lazy(() => import("./pages/admin/Pelanggan"));
 const Components = React.lazy(() => import("./pages/admin/Components"));
 const Karyawan = React.lazy(() => import("./pages/admin/Karyawan"));
 const PromoAdmin = React.lazy(() => import("./pages/admin/PromoAdmin"));
+const UlasanAdmin = React.lazy(() => import("./pages/admin/UlasanAdmin"));
 
 export default function App() {
   return (
@@ -88,6 +89,7 @@ export default function App() {
           <Route path="components" element={<Components />} />
           <Route path="karyawan" element={<Karyawan />} />
           <Route path="promo" element={<PromoAdmin />} />
+          <Route path="/admin/ulasan" element={<UlasanAdmin />} />
         </Route>
       </Routes>
     </Suspense>

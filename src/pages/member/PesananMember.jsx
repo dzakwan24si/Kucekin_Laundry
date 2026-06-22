@@ -1,19 +1,30 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Package, Clock, CheckCircle2, RotateCcw, Receipt, ArrowRight, Loader2 } from "lucide-react";
+import { Package, Clock, CheckCircle2, RotateCcw, Receipt, ArrowRight, Loader2, MessageSquare, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 // Import API
 import { transactionAPI } from "@/services/transactionAPI";
 
+// Import Komponen Modal Ulasan yang baru kita buat
+import ModalUlasan from "@/components/ModalUlasan";
+
 export default function PesananMember() {
   const [activeTab, setActiveTab] = useState("aktif"); 
   const navigate = useNavigate();
+  const [userId, setUserId] = useState(null);
 
-  // State Dinamis
+  // State Dinamis Data Pesanan
   const [pesananAktif, setPesananAktif] = useState([]);
   const [riwayatPesanan, setRiwayatPesanan] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // ==========================================
+  // STATE KHUSUS FITUR ULASAN
+  // ==========================================
+  const [reviewedTransactions, setReviewedTransactions] = useState({}); // Lacak pesanan mana yang sudah diulas
+  const [isModalReviewOpen, setIsModalReviewOpen] = useState(false);
+  const [selectedTxForReview, setSelectedTxForReview] = useState(null);
 
   useEffect(() => {
     const fetchPesanan = async () => {
@@ -21,6 +32,7 @@ export default function PesananMember() {
         const userStr = localStorage.getItem('user');
         if (userStr) {
           const user = JSON.parse(userStr);
+          setUserId(user.id);
           const data = await transactionAPI.getUserTransactions(user.id);
           
           // Pisahkan data berdasarkan status
@@ -29,6 +41,18 @@ export default function PesananMember() {
           
           setPesananAktif(aktif);
           setRiwayatPesanan(riwayat);
+
+          // Cek status review di background untuk setiap riwayat yang Selesai
+          const reviewStatusMap = {};
+          for (const history of riwayat) {
+            try {
+              const reviewExist = await transactionAPI.getReviewByTransactionId(history.id);
+              reviewStatusMap[history.id] = !!reviewExist; // True jika sudah ada, false jika belum
+            } catch (err) {
+              reviewStatusMap[history.id] = false;
+            }
+          }
+          setReviewedTransactions(reviewStatusMap);
         }
       } catch (error) {
         console.error("Gagal menarik data pesanan:", error);
@@ -40,7 +64,7 @@ export default function PesananMember() {
     fetchPesanan();
   }, []);
 
-  // Format Tanggal (Contoh: 16 Jun 2026)
+  // Format Tanggal
   const formatTanggal = (dateStr) => {
     if (!dateStr) return "-";
     return new Date(dateStr).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
@@ -57,7 +81,7 @@ export default function PesananMember() {
     }
   };
 
-  // Helper untuk mengambil Nama Layanan dari Relasi JSON Supabase
+  // Helper untuk mengambil Nama Layanan dari Relasi
   const getLayananInfo = (transaksi) => {
     const detail = transaksi.transaction_details?.[0];
     if (!detail) return { nama: "Layanan Kucekin", itemStr: "Detail tidak ditemukan" };
@@ -73,10 +97,21 @@ export default function PesananMember() {
     navigate('/member/pesan');
   };
 
+  // Trigger Buka Modal Ulasan
+  const handleBeriUlasan = (txId) => {
+    setSelectedTxForReview(txId);
+    setIsModalReviewOpen(true);
+  };
+
+  // Callback saat Ulasan Berhasil Dikirim
+  const handleReviewSuccess = (txId) => {
+    setReviewedTransactions(prev => ({ ...prev, [txId]: true }));
+  };
+
   return (
-    <div className="space-y-6 md:space-y-8 animate-fade-in pb-12 w-full pt-4">
+    <div className="space-y-6 md:space-y-8 animate-fade-in pb-12 w-full pt-4 relative">
       
-      {/* 1. TYPOGRAPHY HERO & TAB SWITCHER */}
+      {/* TYPOGRAPHY HERO & TAB SWITCHER */}
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-4">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <p className="text-slate-500 font-medium tracking-wide text-sm mb-2 uppercase">Riwayat & Pelacakan</p>
@@ -105,6 +140,7 @@ export default function PesananMember() {
         <div className="py-20 flex justify-center"><Loader2 className="w-10 h-10 text-orange-500 animate-spin" /></div>
       ) : (
         <AnimatePresence mode="wait">
+          
           {/* TAB: SEDANG BERJALAN */}
           {activeTab === "aktif" && (
             <motion.div key="aktif" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-6">
@@ -176,7 +212,7 @@ export default function PesananMember() {
             </motion.div>
           )}
 
-          {/* TAB: RIWAYAT SELESAI */}
+          {/* TAB: RIWAYAT SELESAI & ULASAN */}
           {activeTab === "riwayat" && (
             <motion.div key="riwayat" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
               {riwayatPesanan.length === 0 ? (
@@ -184,6 +220,8 @@ export default function PesananMember() {
               ) : (
                 riwayatPesanan.map((history) => {
                   const info = getLayananInfo(history);
+                  const isReviewed = reviewedTransactions[history.id]; // Cek apakah sudah diulas
+
                   return (
                     <div key={history.id} className="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-200 shadow-sm hover:shadow-lg transition-all group flex flex-col justify-between min-h-[220px]">
                       <div>
@@ -197,11 +235,30 @@ export default function PesananMember() {
                           <Receipt size={12} className="inline mr-1 -mt-0.5" /> {info.itemStr}
                         </p>
                       </div>
-                      <div className="mt-8 pt-5 border-t border-slate-100">
-                        <button onClick={handlePesanLagi} className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-orange-500 text-white px-6 py-4 rounded-xl text-sm font-black transition-all group-hover:scale-[1.02] active:scale-95 shadow-md">
-                          <RotateCcw size={18} className="group-hover:-rotate-180 transition-transform duration-500" /> Pesan Lagi
+                      
+                      {/* ACTION BUTTONS (DIPISAH MENJADI 2) */}
+                      <div className="mt-8 pt-5 border-t border-slate-100 grid grid-cols-2 gap-3">
+                        <button 
+                          onClick={handlePesanLagi} 
+                          className="w-full flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-2 py-3.5 rounded-xl text-xs sm:text-sm font-black transition-all active:scale-95 shadow-md"
+                        >
+                          <RotateCcw size={16} /> Pesan Lagi
                         </button>
+
+                        {isReviewed ? (
+                          <div className="w-full flex items-center justify-center gap-1.5 bg-slate-50 border border-slate-100 text-slate-400 px-2 py-3.5 rounded-xl text-xs sm:text-sm font-black shadow-inner cursor-not-allowed">
+                            <Star size={16} className="fill-slate-300 text-slate-300" /> Diulas
+                          </div>
+                        ) : (
+                          <button 
+                            onClick={() => handleBeriUlasan(history.id)} 
+                            className="w-full flex items-center justify-center gap-1.5 bg-orange-100 border border-orange-200 hover:bg-orange-500 text-orange-600 hover:text-white px-2 py-3.5 rounded-xl text-xs sm:text-sm font-black transition-all shadow-sm active:scale-95"
+                          >
+                            <MessageSquare size={16} /> Beri Ulasan
+                          </button>
+                        )}
                       </div>
+
                     </div>
                   );
                 })
@@ -210,6 +267,15 @@ export default function PesananMember() {
           )}
         </AnimatePresence>
       )}
+
+      {/* RENDER MODAL ULASAN DI SINI */}
+      <ModalUlasan 
+        isOpen={isModalReviewOpen}
+        onClose={() => setIsModalReviewOpen(false)}
+        transactionId={selectedTxForReview}
+        userId={userId}
+        onReviewSuccess={handleReviewSuccess}
+      />
     </div>
   );
 }

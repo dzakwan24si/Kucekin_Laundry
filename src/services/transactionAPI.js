@@ -153,5 +153,45 @@ export const transactionAPI = {
             throw new Error("Kode promo tidak valid atau sudah kadaluarsa.");
         }
         return response.data[0];
+    },
+
+    // ==========================================
+    // FUNGSI KHUSUS REVIEWS / TESTIMONI (CRM)
+    // ==========================================
+
+    // 16. (MEMBER) Kirim Ulasan Baru
+    async submitReview(reviewData) {
+        const response = await axios.post(`${BASE_URL}/reviews`, reviewData, { 
+            headers: { ...headers, "Prefer": "return=representation" } 
+        });
+        return response.data[0];
+    },
+
+    // 17. (MEMBER) Cek apakah transaksi tertentu sudah pernah diulas
+    async getReviewByTransactionId(transactionId) {
+        const response = await axios.get(`${BASE_URL}/reviews?transaction_id=eq.${transactionId}`, { headers });
+        return response.data[0] || null;
+    },
+
+    // 18. (ADMIN) Ambil semua ulasan dari seluruh pelanggan (Dengan Join nama)
+    async getAllReviews() {
+        const response = await axios.get(`${BASE_URL}/reviews?select=*,users(fullname)&order=created_at.desc`, { headers });
+        return response.data;
+    },
+
+    // 19. (ADMIN) Sakelar Kurasi Tampilkan/Sembunyikan di Landing Page
+    async toggleReviewFeatured(id, statusFeatured) {
+        const response = await axios.patch(`${BASE_URL}/reviews?id=eq.${id}`, { is_featured: statusFeatured }, { 
+            headers: { ...headers, "Prefer": "return=representation" } 
+        });
+        return response.data[0];
+    },
+
+    // 20. (GUEST) Ambil ulasan bintang pilihan untuk Landing Page
+    async getFeaturedReviews() {
+        // PERHATIAN: Kita tambahkan ',member_profiles(tier)' agar sistem ikut menarik data level tier
+        const query = 'select=*,users(fullname,member_profiles(tier))';
+        const response = await axios.get(`${BASE_URL}/reviews?${query}&is_featured=eq.true&order=created_at.desc`, { headers });
+        return response.data;
     }
 };

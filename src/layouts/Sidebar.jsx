@@ -1,5 +1,5 @@
 import { Link, NavLink } from "react-router-dom";
-import { LayoutDashboard, ShoppingCart, ListOrdered, Users, Package, Settings, LogOut, FileUser, Ticket } from "lucide-react";
+import { LayoutDashboard, ShoppingCart, ListOrdered, Users, Package, Settings, LogOut, FileUser, Ticket, MessageSquare } from "lucide-react";
 
 export default function Sidebar() {
   // 1. Memperbarui semua path dengan menambahkan prefix /admin sesuai rute baru
@@ -9,6 +9,7 @@ export default function Sidebar() {
     { icon: ListOrdered, label: "Layanan", path: "/admin/layanan" },
     { icon: Users, label: "Pelanggan", path: "/admin/pelanggan" },
     { icon: Ticket, label: "Promo", path: "/admin/promo" },
+    { icon: MessageSquare, label: "Ulasan", path: "/admin/ulasan" },
     { icon: FileUser, label: "Data Karyawan", path: "/admin/karyawan" },
     { icon: Settings, label: "Pengaturan", path: "/admin/pengaturan" },
   ];
