@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const CekStatus = () => {
   const [resi, setResi] = useState('');
@@ -16,7 +17,7 @@ const CekStatus = () => {
     { id: 4, title: 'Siap Diantar', desc: 'Cucian selesai dan siap dikirim kembali.' },
   ];
 
-  const handleCekStatus = (e) => {
+  const handleCekStatus = async (e) => {
     e.preventDefault();
     if (!resi.trim()) return;
     
@@ -24,23 +25,49 @@ const CekStatus = () => {
     setError('');
     setStatusData(null);
 
-    // Simulasi pencarian ke database/API (Delay 1.5 detik agar animasi terlihat)
-    setTimeout(() => {
-      setIsLoading(false);
-      // Contoh: Jika user memasukkan resi "KUC-12345"
-      if (resi.toUpperCase() === 'KUC-12345') {
+    try {
+      const BASE_URL = "https://impjljpcvddyhfzeuafn.supabase.co/rest/v1";
+      const API_KEY = "sb_publishable_RqqwWKzw8YLmUv6qPPtUyQ_Ma85wMbJ";
+      const headers = {
+        apikey: API_KEY,
+        Authorization: `Bearer ${API_KEY}`,
+      };
+
+      const query = 'select=*,users(fullname),transaction_details(qty,services(nama_layanan,jenis))';
+      const response = await axios.get(`${BASE_URL}/transactions?id=eq.${resi}&${query}`, { headers });
+      
+      if (response.data && response.data.length > 0) {
+        const trx = response.data[0];
+        
+        let currentStep = 1;
+        const statusLow = trx.status_pesanan?.toLowerCase() || '';
+        if (statusLow.includes('diterima') || statusLow.includes('pending')) currentStep = 1;
+        else if (statusLow.includes('jemput')) currentStep = 2;
+        else if (statusLow.includes('proses')) currentStep = 3;
+        else if (statusLow.includes('selesai') || statusLow.includes('antar')) currentStep = 4;
+        
+        const layananName = trx.transaction_details && trx.transaction_details.length > 0
+          ? trx.transaction_details.map(d => d.services?.nama_layanan).filter(Boolean).join(', ')
+          : 'Layanan Standar';
+
         setStatusData({
-          id: 'KUC-12345',
-          nama: 'Budi Santoso',
-          layanan: 'Cuci & Setrika',
-          tanggalPesan: '14 Jun 2026',
-          estimasiSelesai: '15 Jun 2026, 14:00 WIB',
-          currentStep: 3, // Anggap saja saat ini sedang di tahap ke-3 (Diproses)
+          id: trx.id,
+          nama: trx.users?.fullname || 'Pelanggan',
+          layanan: layananName || 'Layanan Standar',
+          tanggalPesan: new Date(trx.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' }),
+          estimasiSelesai: 'Estimasi menyusul',
+          currentStep: currentStep,
+          statusText: trx.status_pesanan || 'Menunggu'
         });
       } else {
-        setError('Nomor Resi tidak ditemukan. Pastikan Anda memasukkan nomor yang benar (Contoh: KUC-12345).');
+        setError('Nomor Resi tidak ditemukan. Pastikan Anda memasukkan nomor yang benar.');
       }
-    }, 1500);
+    } catch (err) {
+      console.error(err);
+      setError('Terjadi kesalahan koneksi. Silakan coba lagi.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

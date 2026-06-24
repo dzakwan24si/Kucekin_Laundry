@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
+import axios from 'axios';
 import {
   Dialog,
   DialogContent,
@@ -27,6 +29,39 @@ const blogPosts = [
 ];
 
 const BlogNewsletterSection = () => {
+  const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [feedback, setFeedback] = useState(null);
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setIsLoading(true);
+    setFeedback(null);
+
+    try {
+      const BASE_URL = "https://impjljpcvddyhfzeuafn.supabase.co/rest/v1";
+      const API_KEY = "sb_publishable_RqqwWKzw8YLmUv6qPPtUyQ_Ma85wMbJ";
+      const headers = {
+        apikey: API_KEY,
+        Authorization: `Bearer ${API_KEY}`,
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+      };
+
+      await axios.post(`${BASE_URL}/subscribers`, { email }, { headers });
+      
+      setFeedback({ type: 'success', message: 'Terima kasih telah berlangganan!' });
+      setEmail('');
+    } catch (error) {
+      setFeedback({ type: 'error', message: 'Email ini sudah terdaftar atau terjadi kesalahan.' });
+    } finally {
+      setIsLoading(false);
+      setTimeout(() => setFeedback(null), 3000);
+    }
+  };
+
   return (
     <>
       {/* Blog Section */}
@@ -165,22 +200,50 @@ const BlogNewsletterSection = () => {
               </p>
               
               {/* Form Input bergaya Kapsul/Pill menyatu dengan tombol */}
-              <div className="flex flex-col sm:flex-row items-center bg-white/10 backdrop-blur-md p-1.5 rounded-3xl sm:rounded-full border border-white/20 shadow-inner max-w-md mx-auto md:mx-0">
+              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row items-center bg-white/10 backdrop-blur-md p-1.5 rounded-3xl sm:rounded-full border border-white/20 shadow-inner max-w-md mx-auto md:mx-0">
                 <input 
                   type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
+                  required
                   placeholder="Masukkan email Anda..." 
                   className="w-full sm:flex-1 bg-transparent px-5 py-3 text-sm text-white placeholder-slate-300 focus:outline-none" 
                 />
-                <button className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-full px-8 py-3 text-sm transition-all shadow-md mt-2 sm:mt-0">
-                  Langganan
+                <button type="submit" disabled={isLoading} className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 disabled:opacity-75 disabled:cursor-not-allowed text-white font-semibold rounded-full px-8 py-3 text-sm transition-all shadow-md mt-2 sm:mt-0">
+                  {isLoading ? 'Memproses...' : 'Langganan'}
                 </button>
-              </div>
+              </form>
 
             </div>
           </motion.div>
 
         </div>
       </section>
+
+      {/* Toast Alert */}
+      {feedback && (
+        <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 fade-in duration-300">
+          <div className={`px-5 py-4 rounded-xl shadow-xl border flex items-center gap-3 ${
+            feedback.type === 'success' ? 'bg-white border-green-100 text-green-700' : 'bg-white border-red-100 text-red-600'
+          }`}>
+            {feedback.type === 'success' ? (
+              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+            )}
+            <span className="text-sm font-bold tracking-wide">{feedback.message}</span>
+          </div>
+        </div>
+      )}
     </>
   );
 };
