@@ -1,5 +1,13 @@
 import { motion } from 'framer-motion';
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "../ui/dialog";
 const blogPosts = [
   {
     date: 'Jumat, 15 Mar 2024', readTime: '2 Min Baca',
@@ -49,30 +57,73 @@ const BlogNewsletterSection = () => {
           className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto text-left"
         >
           {blogPosts.map((post, idx) => (
-            <motion.div 
-              key={idx} 
-              variants={{
-                hidden: { opacity: 0, y: 30 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-              }}
-              className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 cursor-pointer group"
-            >
-              <div className="h-48 overflow-hidden">
-                <img src={post.img} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              </div>
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-3">
-                  <span className="text-xs text-slate-400 font-medium">{post.date}</span>
-                  <span className="text-xs text-slate-400 font-medium">{post.readTime}</span>
+            <Dialog key={idx}>
+              <DialogTrigger asChild>
+                <motion.div 
+                  variants={{
+                    hidden: { opacity: 0, y: 30 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+                  }}
+                  className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 cursor-pointer group flex flex-col"
+                >
+                  <div className="h-48 overflow-hidden">
+                    <img src={post.img} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  </div>
+                  <div className="p-6 flex-1 flex flex-col">
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-xs text-slate-400 font-medium">{post.date}</span>
+                      <span className="text-xs text-slate-400 font-medium">{post.readTime}</span>
+                    </div>
+                    <div>
+                      <span className="inline-block bg-orange-50 text-orange-600 text-xs font-bold px-3 py-1 rounded-full mb-3">
+                        {post.tag}
+                      </span>
+                    </div>
+                    <h3 className="text-base font-bold text-slate-900 leading-snug group-hover:text-orange-500 transition-colors mb-4">
+                      {post.title}
+                    </h3>
+                    <div className="mt-auto pt-4 border-t border-slate-100 text-sm font-semibold text-orange-500 flex items-center gap-1 group-hover:gap-2 transition-all">
+                      Baca Selengkapnya
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
+                </motion.div>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-bold text-slate-900 leading-tight pr-8">{post.title}</DialogTitle>
+                  <DialogDescription className="flex items-center gap-3 text-sm text-slate-500 mt-2">
+                    <span>{post.date}</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                    <span>{post.readTime}</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                    <span className="text-orange-600 font-semibold">{post.tag}</span>
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="mt-4 text-slate-600 leading-relaxed space-y-4">
+                  <img src={post.img} alt={post.title} className="w-full h-64 md:h-80 object-cover rounded-xl mb-6 shadow-sm" />
+                  <p>
+                    Ini adalah konten artikel dummy untuk <strong>{post.title}</strong>. 
+                    Perawatan pakaian yang tepat adalah kunci untuk memastikan pakaian kesayangan Anda tetap awet dan terlihat seperti baru.
+                  </p>
+                  <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                  </p>
+                  <p>
+                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida.
+                  </p>
+                  <div className="pt-6 flex justify-end">
+                    <DialogClose asChild>
+                      <button className="bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-full px-6 py-2.5 text-sm font-semibold transition-all">
+                        Tutup Artikel
+                      </button>
+                    </DialogClose>
+                  </div>
                 </div>
-                <span className="inline-block bg-orange-50 text-orange-600 text-xs font-bold px-3 py-1 rounded-full mb-3">
-                  {post.tag}
-                </span>
-                <h3 className="text-base font-bold text-slate-900 leading-snug group-hover:text-orange-500 transition-colors">
-                  {post.title}
-                </h3>
-              </div>
-            </motion.div>
+              </DialogContent>
+            </Dialog>
           ))}
         </motion.div>
       </section>
