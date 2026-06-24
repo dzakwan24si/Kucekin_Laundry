@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import {
@@ -10,25 +10,30 @@ import {
   DialogTrigger,
   DialogClose,
 } from "../ui/dialog";
-const blogPosts = [
-  {
-    date: 'Jumat, 15 Mar 2024', readTime: '2 Min Baca',
-    img: 'https://image.qwenlm.ai/public_source/ccc69bcd-f31d-4286-9fe8-970f55530d23/178b5e9f2-cefb-4036-b349-23df9da0a95c.png',
-    tag: 'Tips Laundry', title: 'Trik Laundry Esensial yang Wajib Diketahui Setiap Ibu Rumah Tangga',
-  },
-  {
-    date: 'Selasa, 12 Mar 2024', readTime: '8 Min Baca',
-    img: 'https://image.qwenlm.ai/public_source/ccc69bcd-f31d-4286-9fe8-970f55530d23/10f9cbbe9-d24a-41e7-8216-fe1d820ec19f.png',
-    tag: 'Perawatan', title: 'Panduan Utama Menghilangkan Noda Membandel pada Pakaian Putih',
-  },
-  {
-    date: 'Minggu, 10 Mar 2024', readTime: '6 Min Baca',
-    img: 'https://image.qwenlm.ai/public_source/ccc69bcd-f31d-4286-9fe8-970f55530d23/1c84509be-76fc-417c-8c69-c89c55898edb.png',
-    tag: 'Keluarga', title: 'Teknik Menyortir Cucian yang Efisien untuk Keluarga Sibuk',
-  },
-];
-
 const BlogNewsletterSection = () => {
+  const [artikelList, setArtikelList] = useState([]);
+  const [isArtikelLoading, setIsArtikelLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchArtikel = async () => {
+      try {
+        const BASE_URL = "https://impjljpcvddyhfzeuafn.supabase.co/rest/v1";
+        const API_KEY = "sb_publishable_RqqwWKzw8YLmUv6qPPtUyQ_Ma85wMbJ";
+        const headers = {
+          apikey: API_KEY,
+          Authorization: `Bearer ${API_KEY}`,
+        };
+        const response = await axios.get(`${BASE_URL}/artikel?order=created_at.desc&limit=3`, { headers });
+        setArtikelList(response.data);
+      } catch (error) {
+        console.error("Gagal mengambil artikel:", error);
+      } finally {
+        setIsArtikelLoading(false);
+      }
+    };
+    fetchArtikel();
+  }, []);
+
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [feedback, setFeedback] = useState(null);
@@ -91,8 +96,12 @@ const BlogNewsletterSection = () => {
           }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto text-left"
         >
-          {blogPosts.map((post, idx) => (
-            <Dialog key={idx}>
+          {isArtikelLoading ? (
+            <div className="col-span-1 md:col-span-3 text-center py-10 text-slate-500 font-medium">Memuat artikel...</div>
+          ) : artikelList.map((post, idx) => {
+            const postDate = new Date(post.created_at).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
+            return (
+            <Dialog key={post.id || idx}>
               <DialogTrigger asChild>
                 <motion.div 
                   variants={{
@@ -102,20 +111,28 @@ const BlogNewsletterSection = () => {
                   className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 cursor-pointer group flex flex-col"
                 >
                   <div className="h-48 overflow-hidden">
-                    <img src={post.img} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img 
+                      src={(!post.image_url || post.image_url.includes('placeholder')) ? [
+                        'https://image.qwenlm.ai/public_source/ccc69bcd-f31d-4286-9fe8-970f55530d23/178b5e9f2-cefb-4036-b349-23df9da0a95c.png',
+                        'https://image.qwenlm.ai/public_source/ccc69bcd-f31d-4286-9fe8-970f55530d23/10f9cbbe9-d24a-41e7-8216-fe1d820ec19f.png',
+                        'https://image.qwenlm.ai/public_source/ccc69bcd-f31d-4286-9fe8-970f55530d23/1c84509be-76fc-417c-8c69-c89c55898edb.png'
+                      ][idx % 3] : post.image_url} 
+                      alt={post.judul} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    />
                   </div>
                   <div className="p-6 flex-1 flex flex-col">
                     <div className="flex justify-between items-center mb-3">
-                      <span className="text-xs text-slate-400 font-medium">{post.date}</span>
-                      <span className="text-xs text-slate-400 font-medium">{post.readTime}</span>
+                      <span className="text-xs text-slate-400 font-medium">{postDate}</span>
+                      <span className="text-xs text-slate-400 font-medium">5 Min Baca</span>
                     </div>
                     <div>
                       <span className="inline-block bg-orange-50 text-orange-600 text-xs font-bold px-3 py-1 rounded-full mb-3">
-                        {post.tag}
+                        Tips & Trik
                       </span>
                     </div>
-                    <h3 className="text-base font-bold text-slate-900 leading-snug group-hover:text-orange-500 transition-colors mb-4">
-                      {post.title}
+                    <h3 className="text-base font-bold text-slate-900 leading-snug group-hover:text-orange-500 transition-colors mb-4 line-clamp-2">
+                      {post.judul}
                     </h3>
                     <div className="mt-auto pt-4 border-t border-slate-100 text-sm font-semibold text-orange-500 flex items-center gap-1 group-hover:gap-2 transition-all">
                       Baca Selengkapnya
@@ -128,27 +145,26 @@ const BlogNewsletterSection = () => {
               </DialogTrigger>
               <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle className="text-2xl font-bold text-slate-900 leading-tight pr-8">{post.title}</DialogTitle>
+                  <DialogTitle className="text-2xl font-bold text-slate-900 leading-tight pr-8">{post.judul}</DialogTitle>
                   <DialogDescription className="flex items-center gap-3 text-sm text-slate-500 mt-2">
-                    <span>{post.date}</span>
+                    <span>{postDate}</span>
                     <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
-                    <span>{post.readTime}</span>
+                    <span>5 Min Baca</span>
                     <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
-                    <span className="text-orange-600 font-semibold">{post.tag}</span>
+                    <span className="text-orange-600 font-semibold">Tips & Trik</span>
                   </DialogDescription>
                 </DialogHeader>
                 <div className="mt-4 text-slate-600 leading-relaxed space-y-4">
-                  <img src={post.img} alt={post.title} className="w-full h-64 md:h-80 object-cover rounded-xl mb-6 shadow-sm" />
-                  <p>
-                    Ini adalah konten artikel dummy untuk <strong>{post.title}</strong>. 
-                    Perawatan pakaian yang tepat adalah kunci untuk memastikan pakaian kesayangan Anda tetap awet dan terlihat seperti baru.
-                  </p>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                  </p>
-                  <p>
-                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida.
-                  </p>
+                  <img 
+                    src={(!post.image_url || post.image_url.includes('placeholder')) ? [
+                      'https://image.qwenlm.ai/public_source/ccc69bcd-f31d-4286-9fe8-970f55530d23/178b5e9f2-cefb-4036-b349-23df9da0a95c.png',
+                      'https://image.qwenlm.ai/public_source/ccc69bcd-f31d-4286-9fe8-970f55530d23/10f9cbbe9-d24a-41e7-8216-fe1d820ec19f.png',
+                      'https://image.qwenlm.ai/public_source/ccc69bcd-f31d-4286-9fe8-970f55530d23/1c84509be-76fc-417c-8c69-c89c55898edb.png'
+                    ][idx % 3] : post.image_url} 
+                    alt={post.judul} 
+                    className="w-full h-64 md:h-80 object-cover rounded-xl mb-6 shadow-sm" 
+                  />
+                  <div className="whitespace-pre-wrap text-base">{post.konten}</div>
                   <div className="pt-6 flex justify-end">
                     <DialogClose asChild>
                       <button className="bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-full px-6 py-2.5 text-sm font-semibold transition-all">
@@ -159,7 +175,7 @@ const BlogNewsletterSection = () => {
                 </div>
               </DialogContent>
             </Dialog>
-          ))}
+          )})}
         </motion.div>
       </section>
 

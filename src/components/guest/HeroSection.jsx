@@ -1,7 +1,26 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
 const HeroSection = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Mengecek status login dari localStorage sesuai pola aplikasi existing
+    const checkAuth = () => {
+      const userSession = localStorage.getItem('user');
+      if (userSession) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+    };
+    
+    checkAuth();
+    window.addEventListener('storage', checkAuth);
+    return () => window.removeEventListener('storage', checkAuth);
+  }, []);
+
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-gray-50 to-white pt-28 pb-16 px-6 overflow-hidden">
       {/* Kontainer Flex Utama: Membungkus bagian Kiri dan Kanan */}
@@ -29,10 +48,10 @@ const HeroSection = () => {
           {/* Tombol Aksi */}
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-8">
             <Link
-              to="/login"
+              to={isAuthenticated ? "/member" : "/register"}
               className="bg-slate-900 hover:bg-slate-800 text-white rounded-full px-7 py-3.5 text-sm font-semibold flex items-center gap-2 transition-all shadow-md"
             >
-              Mulai Sekarang
+              {isAuthenticated ? "Ke Dashboard" : "Daftar Sekarang"}
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <circle
                   cx="8"

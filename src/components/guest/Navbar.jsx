@@ -1,13 +1,35 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activePromo, setActivePromo] = useState(null);
 
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchPromo = async () => {
+      try {
+        const BASE_URL = "https://impjljpcvddyhfzeuafn.supabase.co/rest/v1";
+        const API_KEY = "sb_publishable_RqqwWKzw8YLmUv6qPPtUyQ_Ma85wMbJ";
+        const headers = {
+          apikey: API_KEY,
+          Authorization: `Bearer ${API_KEY}`,
+        };
+        const response = await axios.get(`${BASE_URL}/promos?is_active=eq.true&target_tier=eq.Semua&order=created_at.desc&limit=1`, { headers });
+        if (response.data && response.data.length > 0) {
+          setActivePromo(response.data[0]);
+        }
+      } catch (error) {
+        console.error("Gagal mengambil promo:", error);
+      }
+    };
+    fetchPromo();
+  }, []);
 
   // Menangani efek transparan berubah jadi putih padat saat scroll
   useEffect(() => {
@@ -37,12 +59,19 @@ const Navbar = () => {
   };
 
   return (
-    // Wadah terluar fixed yang merentang penuh
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "py-2.5" : "py-6" // Beri sedikit margin atas agar desain melayang terlihat
-      }`}
-    >
+    <>
+      {activePromo && (
+        <div className="bg-slate-900 text-white text-xs md:text-sm py-2 px-4 text-center fixed top-0 w-full z-[60] shadow-md flex flex-wrap justify-center items-center gap-1.5 md:gap-2">
+          <span className="font-medium">Promo Spesial: <strong className="text-orange-400">{activePromo.nama_promo}</strong>!</span>
+          <span className="opacity-90">Gunakan kode: <strong className="bg-white/20 px-2 py-0.5 rounded tracking-wider">{activePromo.kode_promo}</strong></span>
+        </div>
+      )}
+      {/* Wadah terluar fixed yang merentang penuh */}
+      <nav
+        className={`fixed left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled ? "py-2.5" : "py-6" // Beri sedikit margin atas agar desain melayang terlihat
+        } ${activePromo ? "top-8 md:top-9" : "top-0"}`}
+      >
       <div className="max-w-6xl px-6 mx-auto">
         {/* === DESAIN LENGKUNG INTI (KAPSUL NAVIGASI) === */}
         {/* Mengembalikan total desain dari uploaded:Navbar.jsx */}
@@ -238,6 +267,7 @@ const Navbar = () => {
         )}
       </AnimatePresence>
     </nav>
+    </>
   );
 };
 
