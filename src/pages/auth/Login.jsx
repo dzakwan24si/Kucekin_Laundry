@@ -138,25 +138,14 @@ export default function Login() {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-4 mt-2 rounded-2xl text-sm font-bold tracking-wide transition-all ${
-            loading
+          className={`w-full py-4 mt-2 rounded-2xl text-sm font-bold tracking-wide transition-all ${loading
               ? "bg-slate-700 text-slate-400 cursor-not-allowed"
               : "bg-blue-800 text-white shadow-lg shadow-blue-800/30 hover:-translate-y-0.5"
-          }`}
+            }`}
         >
           {loading ? "Sedang Memproses..." : "Login"}
         </button>
 
-        {/* Link Pendaftaran Karyawan Baru */}
-        <p className="text-center text-xs text-gray-300 mt-6">
-          Belum punya akun staf?{" "}
-          <Link
-            to="/register"
-            className="text-blue-400 font-bold hover:text-blue-300 transition-colors"
-          >
-            Daftar di sini
-          </Link>
-        </p>
       </form>
     </div>
   );

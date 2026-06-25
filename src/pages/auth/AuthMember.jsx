@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { User, Phone, Lock, Sparkles, ArrowRight, CheckCircle2, Mail, Loader2 } from "lucide-react";
+import { User, Phone, Lock, Sparkles, ArrowRight, CheckCircle2, Mail, Loader2, ArrowLeft } from "lucide-react";
 
 import { authAPI } from "@/services/authAPI";
 
@@ -73,13 +73,31 @@ export default function AuthMember() {
     <div className="min-h-screen flex bg-slate-50 font-sans selection:bg-orange-500 selection:text-white">
       
       {/* SISI KIRI: VISUAL & MARKETING */}
-      <div className="hidden lg:flex lg:w-1/2 bg-slate-900 relative overflow-hidden flex-col justify-between p-16">
-        <div className="relative z-10 flex items-center gap-3">
-        <img
-                src="/img/LogoKucekinVertical.png"
-                alt="Logo Kucekin"
-                className="h-20 w-auto object-contain"
-              />
+      <div 
+        className="hidden lg:flex lg:w-1/2 relative overflow-hidden flex-col justify-between p-16"
+        style={{
+          backgroundImage: 'url("https://i.ibb.co.com/h1YKRM6L/laundry.jpg")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        {/* Overlay Gelap */}
+        <div className="absolute inset-0 bg-slate-900/85"></div>
+        
+        {/* Tombol Kembali (Desktop) */}
+        <Link to="/" className="absolute top-8 left-8 z-20 flex items-center gap-2 text-slate-400 hover:text-white font-medium transition-colors">
+          <ArrowLeft size={20} />
+          Kembali ke Beranda
+        </Link>
+
+        <div className="relative z-10 flex items-center gap-3 mt-8">
+          <div className="bg-white p-3 md:p-4 rounded-2xl shadow-xl shadow-black/20 border border-white/20 inline-block">
+            <img
+              src="/img/LogoKucekinVertical.png"
+              alt="Logo Kucekin"
+              className="h-14 md:h-16 w-auto object-contain"
+            />
+          </div>
         </div>
 
         <div className="relative z-10">
@@ -117,8 +135,9 @@ export default function AuthMember() {
 
       {/* SISI KANAN: FORMULIR OTENTIKASI */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 md:p-16 relative">
-        <Link to="/" className="absolute top-8 left-8 lg:hidden flex items-center gap-2 text-sm font-bold text-slate-500">
-          &larr; Kembali
+        <Link to="/" className="absolute top-6 left-6 lg:hidden flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors">
+          <ArrowLeft size={18} />
+          Kembali ke Beranda
         </Link>
 
         <div className="w-full max-w-md">
