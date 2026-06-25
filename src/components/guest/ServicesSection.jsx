@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
@@ -33,6 +34,18 @@ const cardVariants = {
 };
   
 const ServicesSection = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const userSession = localStorage.getItem('user');
+      setIsAuthenticated(!!userSession);
+    };
+    checkAuth();
+    window.addEventListener('storage', checkAuth);
+    return () => window.removeEventListener('storage', checkAuth);
+  }, []);
+
   return (
     <section id="layanan" className="py-20 px-6 bg-white text-center">
       <motion.h2 
@@ -111,8 +124,8 @@ const ServicesSection = () => {
                   </button>
                 </DialogClose>
                 <DialogClose asChild>
-                  <Link to="/login" className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-6 py-2.5 text-sm font-bold shadow-md transition-all flex items-center gap-2">
-                    Pesan Sekarang
+                  <Link to={isAuthenticated ? "/member" : "/register"} className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-6 py-2.5 text-sm font-bold shadow-md transition-all flex items-center gap-2">
+                    {isAuthenticated ? "Ke Dashboard" : "Pesan Sekarang"}
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>

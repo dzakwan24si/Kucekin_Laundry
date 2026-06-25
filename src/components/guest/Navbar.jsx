@@ -7,6 +7,17 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activePromo, setActivePromo] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const userSession = localStorage.getItem('user');
+      setIsAuthenticated(!!userSession);
+    };
+    checkAuth();
+    window.addEventListener('storage', checkAuth);
+    return () => window.removeEventListener('storage', checkAuth);
+  }, []);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -153,10 +164,10 @@ const Navbar = () => {
               Masuk
             </Link>
             <Link
-              to="/login"
+              to={isAuthenticated ? "/member" : "/register"}
               className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-full text-xs font-bold transition-all shadow-md flex items-center gap-2 group"
             >
-              Pesan Sekarang
+              {isAuthenticated ? "Dasbor" : "Pesan Sekarang"}
               <svg
                 className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"
                 fill="none"
@@ -256,11 +267,11 @@ const Navbar = () => {
                 Masuk / Admin
               </Link>
               <Link
-                to="/pesan"
+                to={isAuthenticated ? "/member" : "/register"}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="bg-orange-500 hover:bg-orange-600 text-white text-center py-3.5 rounded-xl font-bold shadow-md transition-colors"
               >
-                Pesan Sekarang
+                {isAuthenticated ? "Dasbor Member" : "Pesan Sekarang"}
               </Link>
             </div>
           </motion.div>

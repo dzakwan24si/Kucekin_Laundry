@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Plus, Edit, Trash2, Ticket, Loader2, X, CheckCircle2, AlertCircle } from "lucide-react";
+import { Plus, Edit, Trash2, Ticket, Loader2, X, CheckCircle2, AlertCircle, Search } from "lucide-react";
 
 import PageHeader from "../../components/PageHeader";
 import Button from "../../components/Button";
@@ -11,6 +11,10 @@ import { transactionAPI } from "@/services/transactionAPI";
 export default function PromoAdmin() {
   const [promos, setPromos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeFilter, setActiveFilter] = useState("Semua");
+  const filters = ["Semua", "VIP", "Gold", "Silver", "Bronze"];
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,6 +45,14 @@ export default function PromoAdmin() {
   useEffect(() => {
     fetchPromos();
   }, []);
+
+  const filteredPromos = promos.filter(p => {
+    const nama = p.nama_promo || "";
+    const kode = p.kode_promo || "";
+    const matchesSearch = nama.toLowerCase().includes(searchTerm.toLowerCase()) || kode.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = activeFilter === "Semua" || p.target_tier === activeFilter;
+    return matchesSearch && matchesFilter;
+  });
 
   const handleOpenAdd = () => {
     setEditingId(null);
@@ -105,12 +117,46 @@ export default function PromoAdmin() {
         </Button>
       </div>
 
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div className="flex flex-wrap gap-2 bg-gray-100/80 p-1 rounded-xl w-fit">
+          {filters.map((filter) => (
+            <button
+              key={filter}
+              onClick={() => setActiveFilter(filter)}
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                activeFilter === filter
+                  ? "bg-white text-blue-600 shadow-sm"
+                  : "text-gray-500 hover:text-gray-800"
+              }`}
+            >
+              {filter}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="relative w-full md:w-96">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+          <input
+            type="text"
+            placeholder="Cari kode atau nama promo..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-colors text-gray-800"
+          />
+        </div>
+        <div className="text-xs font-medium text-gray-400 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+          Total: <span className="text-gray-700 font-bold">{filteredPromos.length}</span> Promo
+        </div>
+      </div>
+
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <Table headers={["Kode", "Nama Promo", "Tipe & Nilai", "Syarat Belanja", "Target Tier", "Status", "Aksi"]}>
           {isLoading ? (
              <tr><td colSpan="7" className="p-8 text-center"><Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto" /></td></tr>
-          ) : promos.length > 0 ? (
-            promos.map((item) => (
+          ) : filteredPromos.length > 0 ? (
+            filteredPromos.map((item) => (
               <tr key={item.id} className="border-b border-gray-50 hover:bg-blue-50/30 transition-colors">
                 <td className="p-5 font-black text-blue-600 tracking-wider bg-blue-50/50">{item.kode_promo}</td>
                 <td className="p-5 font-bold text-gray-800">{item.nama_promo}</td>
