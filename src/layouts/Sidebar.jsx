@@ -11,18 +11,17 @@ export default function Sidebar() {
     { icon: Ticket, label: "Promo", path: "/admin/promo" },
     { icon: MessageSquare, label: "Ulasan", path: "/admin/ulasan" },
     { icon: FileUser, label: "Data Karyawan", path: "/admin/karyawan" },
-    { icon: Settings, label: "Pengaturan", path: "/admin/pengaturan" },
   ];
 
   return (
-    <aside className="w-20 bg-white flex flex-col items-center py-6 border-r border-gray-100 shrink-0">
+    <aside className="w-20 bg-white flex flex-col items-center py-6 border-r border-gray-100 shrink-0 overflow-y-auto hide-scrollbar">
       {/* Logo - Mengubah text 'Ki' menjadi 'Ku' agar sesuai dengan Kucekin */}
-      <div className="w-12 h-12 bg-blue-800 rounded-full flex items-center justify-center mb-8 shadow-md">
+      <div className="w-12 h-12 bg-blue-800 rounded-full flex items-center justify-center mb-6 shadow-md shrink-0">
         <span className="text-white font-bold text-xl">Ku</span>
       </div>
 
       {/* Nav Items */}
-      <nav className="flex flex-col gap-1 w-full px-3">
+      <nav className="flex flex-col gap-1.5 w-full px-3">
         {sidebarItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -32,7 +31,7 @@ export default function Sidebar() {
               // 2. Menambahkan prop 'end' khusus untuk rute base /admin agar tidak bentrok dengan sub-route
               end={item.path === "/admin"}
               className={({ isActive }) =>
-                `flex flex-col items-center gap-1 py-3 px-2 rounded-xl transition-all duration-200 ${
+                `flex flex-col items-center gap-1 py-2.5 px-2 rounded-xl transition-all duration-200 ${
                   isActive
                     ? "bg-blue-800 text-white shadow-lg shadow-blue-800/30"
                     : "text-gray-400 hover:text-blue-600 hover:bg-blue-50"
@@ -40,7 +39,7 @@ export default function Sidebar() {
               }
             >
               <Icon size={20} strokeWidth={1.8} />
-              <span className="text-[9px] font-bold leading-tight text-center mt-1">{item.label}</span>
+              <span className="text-[9px] font-bold leading-tight text-center mt-0.5">{item.label}</span>
             </NavLink>
           );
         })}

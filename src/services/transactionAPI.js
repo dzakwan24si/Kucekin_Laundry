@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { notificationAPI } from './notificationAPI';
 
 // Gunakan URL dasar Supabase Anda
 const BASE_URL = "https://impjljpcvddyhfzeuafn.supabase.co/rest/v1";
@@ -42,6 +43,18 @@ export const transactionAPI = {
         // C. Simpan secara massal (bulk insert) ke tabel transaction_details
         await axios.post(`${BASE_URL}/transaction_details`, detailsPayload, { headers });
 
+        // Tembak Notifikasi ke Admin (Pesanan Baru)
+        try {
+            await notificationAPI.sendNotification({
+                recipient_type: 'admin',
+                title: 'Pesanan Baru Masuk!',
+                message: `Pesanan baru (Resi: ${newTransaction.id}) telah dibuat oleh Member.`,
+                type: 'new_order'
+            });
+        } catch (err) {
+            console.error("Gagal kirim notif:", err);
+        }
+
         return newTransaction;
     },
 
@@ -69,10 +82,26 @@ export const transactionAPI = {
     },
 
     // 6. (ADMIN) Ubah Status Pesanan
-    async updateTransactionStatus(id, newStatus) {
+    async updateTransactionStatus(id, newStatus, userId = null) {
         const response = await axios.patch(`${BASE_URL}/transactions?id=eq.${id}`, { status_pesanan: newStatus }, { 
             headers: { ...headers, "Prefer": "return=representation" } 
         });
+        
+        // Tembak Notifikasi ke Member (Status Berubah)
+        if (userId) {
+            try {
+                await notificationAPI.sendNotification({
+                    user_id: userId,
+                    recipient_type: 'member',
+                    title: 'Status Pesanan Diperbarui',
+                    message: `Pesanan Anda (Resi: ${id}) sekarang berstatus: ${newStatus}.`,
+                    type: 'order_update'
+                });
+            } catch (err) {
+                console.error("Gagal kirim notif:", err);
+            }
+        }
+        
         return response.data[0];
     },
 
@@ -87,6 +116,19 @@ export const transactionAPI = {
         const response = await axios.post(`${BASE_URL}/services`, serviceData, { 
             headers: { ...headers, "Prefer": "return=representation" } 
         });
+        
+        // Tembak Notifikasi ke Semua Member (Broadcast Layanan Baru)
+        try {
+            await notificationAPI.sendNotification({
+                recipient_type: 'broadcast',
+                title: 'Layanan Baru Tersedia!',
+                message: `Kami punya layanan baru: ${serviceData.nama_layanan}. Ayo cek sekarang!`,
+                type: 'new_service'
+            });
+        } catch (err) {
+            console.error("Gagal kirim notif broadcast:", err);
+        }
+        
         return response.data[0];
     },
 

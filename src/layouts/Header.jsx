@@ -1,5 +1,6 @@
-import { Search, Bell, ChevronDown, User, Settings, LogOut } from "lucide-react";
+import { Search, Bell, ChevronDown, User, Settings, LogOut, Check } from "lucide-react";
 import Avatar from "../components/Avatar"; 
+import { useNotifications } from "../hooks/useNotifications"; 
 
 // Import komponen Shadcn yang baru saja di-install
 import {
@@ -13,6 +14,8 @@ import {
 import { Link } from "react-router-dom";
 
 export default function Header() {
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications(null, 'admin');
+
   return (
     <header className="flex items-center justify-between px-8 py-5 bg-white border-b border-gray-100">
       {/* Search */}
@@ -27,9 +30,53 @@ export default function Header() {
 
       {/* Right Side */}
       <div className="flex items-center gap-4">
-        <button className="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-xl transition-all">
-          <Bell size={20} />
-        </button>
+        {/* NOTIFICATION DROPDOWN */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-xl transition-all outline-none cursor-pointer">
+              <Bell size={20} />
+              {unreadCount > 0 && (
+                <span className="absolute top-1.5 right-1.5 flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                </span>
+              )}
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-80 font-poppins rounded-xl p-0 overflow-hidden border border-gray-100 shadow-xl">
+            <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+              <span className="font-bold text-gray-800 text-sm">Notifikasi</span>
+              {unreadCount > 0 && (
+                <button onClick={markAllAsRead} className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                  <Check size={14} /> Tandai dibaca
+                </button>
+              )}
+            </div>
+            <div className="max-h-[350px] overflow-y-auto">
+              {notifications.length > 0 ? (
+                notifications.map((notif) => (
+                  <div 
+                    key={notif.id} 
+                    onClick={() => markAsRead(notif.id)}
+                    className={`p-4 border-b border-gray-50 cursor-pointer transition-colors hover:bg-gray-50 ${!notif.is_read ? 'bg-blue-50/20' : ''}`}
+                  >
+                    <div className="flex justify-between items-start mb-1 gap-2">
+                      <span className={`text-sm font-bold leading-tight ${!notif.is_read ? 'text-gray-900' : 'text-gray-700'}`}>{notif.title}</span>
+                      {!notif.is_read && <span className="w-2 h-2 rounded-full bg-blue-500 mt-1 shrink-0 shadow-sm"></span>}
+                    </div>
+                    <p className={`text-xs mb-2 leading-relaxed ${!notif.is_read ? 'text-gray-600' : 'text-gray-500'}`}>{notif.message}</p>
+                    <span className="text-[10px] font-medium text-gray-400">{new Date(notif.created_at).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" })}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="p-8 text-center flex flex-col items-center justify-center">
+                  <Bell size={24} className="text-gray-300 mb-2" />
+                  <span className="text-gray-400 text-sm font-medium">Belum ada notifikasi</span>
+                </div>
+              )}
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
         
         {/* IMPLEMENTASI SHADCN DROPDOWN MENU */}
         <DropdownMenu>

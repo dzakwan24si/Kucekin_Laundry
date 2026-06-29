@@ -1,7 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Bell, Menu, X, Star, User, LogOut, ChevronDown } from "lucide-react";
+import { Bell, Menu, X, Star, User, LogOut, ChevronDown, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+
+// Import komponen Shadcn yang baru saja di-install
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import { useNotifications } from "../hooks/useNotifications";
 
 // Import API
 import { authAPI } from "../services/authAPI";
@@ -14,10 +23,14 @@ export default function MemberLayout() {
 
   // State untuk menyimpan data Navbar dinamis
   const [memberData, setMemberData] = useState({
+    id: null,
     nama: "Loading...",
     poin: 0,
     tier: "Bronze"
   });
+
+  // State notifikasi
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications(memberData.id, "member");
 
   // Tarik data saat komponen dimuat
   useEffect(() => {
@@ -29,6 +42,7 @@ export default function MemberLayout() {
           const profile = await authAPI.getMemberProfile(user.id);
 
           setMemberData({
+            id: user.id,
             nama: user.fullname,
             poin: profile.poin || 0,
             tier: profile.tier || "Bronze"
@@ -116,10 +130,52 @@ export default function MemberLayout() {
             </Link>
 
             {/* Tombol Notifikasi */}
-            <button className="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors relative">
-              <Bell size={18} />
-              <span className="absolute top-2 right-2.5 w-2 h-2 bg-orange-500 rounded-full border-2 border-white"></span>
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors relative outline-none">
+                  <Bell size={18} />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-2 right-2.5 flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-orange-500 border border-white"></span>
+                    </span>
+                  )}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80 font-poppins rounded-xl p-0 overflow-hidden border border-gray-100 shadow-xl z-50">
+                <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-slate-50/50">
+                  <span className="font-bold text-slate-800 text-sm">Notifikasi</span>
+                  {unreadCount > 0 && (
+                    <button onClick={markAllAsRead} className="text-xs font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-1 transition-colors">
+                      <Check size={14} /> Tandai dibaca
+                    </button>
+                  )}
+                </div>
+                <div className="max-h-[350px] overflow-y-auto">
+                  {notifications.length > 0 ? (
+                    notifications.map((notif) => (
+                      <div 
+                        key={notif.id} 
+                        onClick={() => markAsRead(notif.id)}
+                        className={`p-4 border-b border-slate-50 cursor-pointer transition-colors hover:bg-slate-50 ${!notif.is_read ? 'bg-orange-50/30' : ''}`}
+                      >
+                        <div className="flex justify-between items-start mb-1 gap-2">
+                          <span className={`text-sm font-bold leading-tight ${!notif.is_read ? 'text-slate-900' : 'text-slate-700'}`}>{notif.title}</span>
+                          {!notif.is_read && <span className="w-2 h-2 rounded-full bg-orange-500 mt-1 shrink-0 shadow-sm"></span>}
+                        </div>
+                        <p className={`text-xs mb-2 leading-relaxed ${!notif.is_read ? 'text-slate-600' : 'text-slate-500'}`}>{notif.message}</p>
+                        <span className="text-[10px] font-medium text-slate-400">{new Date(notif.created_at).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" })}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-8 text-center flex flex-col items-center justify-center">
+                      <Bell size={24} className="text-slate-300 mb-2" />
+                      <span className="text-slate-400 text-sm font-medium">Belum ada notifikasi</span>
+                    </div>
+                  )}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* Dropdown Profil Minimalis */}
             <div className="relative">

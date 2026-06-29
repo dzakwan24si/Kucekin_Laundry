@@ -64,7 +64,7 @@ export default function DetailPesanan() {
         setIsUpdating(true);
         try {
             // 1. Update status pesanan di database transaksi
-            await transactionAPI.updateTransactionStatus(id, newStatus);
+            await transactionAPI.updateTransactionStatus(id, newStatus, order.user_id);
             
             // 2. Jika statusnya "Selesai", jalankan injeksi Poin Loyalitas
             if (newStatus === "Selesai") {

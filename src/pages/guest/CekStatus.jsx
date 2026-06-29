@@ -14,7 +14,8 @@ const CekStatus = () => {
     { id: 1, title: 'Pesanan Diterima', desc: 'Sistem telah mencatat pesanan Anda.' },
     { id: 2, title: 'Penjemputan', desc: 'Kurir sedang menjemput / sudah mengambil cucian.' },
     { id: 3, title: 'Sedang Diproses', desc: 'Pakaian Anda sedang dicuci & disetrika.' },
-    { id: 4, title: 'Siap Diantar', desc: 'Cucian selesai dan siap dikirim kembali.' },
+    { id: 4, title: 'Sedang Diantar', desc: 'Cucian selesai dan siap dikirim kembali.' },
+    { id: 5, title: 'Selesai', desc: 'Cucian telah diterima oleh pelanggan.' },
   ];
 
   const handleCekStatus = async (e) => {
@@ -41,10 +42,11 @@ const CekStatus = () => {
         
         let currentStep = 1;
         const statusLow = trx.status_pesanan?.toLowerCase() || '';
-        if (statusLow.includes('diterima') || statusLow.includes('pending')) currentStep = 1;
+        if (statusLow.includes('diterima') || statusLow.includes('menunggu')) currentStep = 1;
         else if (statusLow.includes('jemput')) currentStep = 2;
         else if (statusLow.includes('proses')) currentStep = 3;
-        else if (statusLow.includes('selesai') || statusLow.includes('antar')) currentStep = 4;
+        else if (statusLow.includes('antar')) currentStep = 4;
+        else if (statusLow.includes('selesai')) currentStep = 5;
         
         const layananName = trx.transaction_details && trx.transaction_details.length > 0
           ? trx.transaction_details.map(d => d.services?.nama_layanan).filter(Boolean).join(', ')

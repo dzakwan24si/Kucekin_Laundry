@@ -73,10 +73,12 @@ export default function PesananMember() {
   // Helper untuk Progress Bar
   const getProgressValue = (status) => {
     switch(status) {
+      case 'Menunggu': return 1;
       case 'Diterima': return 1;
       case 'Dijemput': return 2;
       case 'Diproses': return 3;
       case 'Diantar': return 4;
+      case 'Selesai': return 5;
       default: return 1;
     }
   };
@@ -178,13 +180,13 @@ export default function PesananMember() {
                       <div className="p-8 md:p-10">
                         <div className="relative mb-12 mt-4 px-2 md:px-8">
                           <div className="absolute left-10 right-10 top-5 h-2 bg-slate-100 rounded-full z-0"></div>
-                          <div className="absolute left-10 top-5 h-2 bg-orange-500 rounded-full z-0 transition-all duration-1000 ease-out" style={{ width: `calc(${(progress - 1) * 33.33}%)` }}></div>
+                          <div className="absolute left-10 top-5 h-2 bg-orange-500 rounded-full z-0 transition-all duration-1000 ease-out" style={{ width: `calc(${(progress - 1) * 25}%)` }}></div>
                           <div className="flex justify-between relative z-10">
-                            {['Diterima', 'Dijemput', 'Diproses', 'Diantar'].map((step, idx) => {
+                            {['Diterima', 'Dijemput', 'Diproses', 'Diantar', 'Selesai'].map((step, idx) => {
                               const isCompleted = idx + 1 <= progress;
                               const isCurrent = idx + 1 === progress;
                               return (
-                                <div key={step} className="flex flex-col items-center gap-3 w-16">
+                                <div key={step} className="flex flex-col items-center gap-3 w-12 md:w-16">
                                   <div className={`w-12 h-12 rounded-full flex items-center justify-center border-[6px] border-white shadow-sm transition-all duration-500 ${isCompleted ? "bg-orange-500 text-white" : "bg-slate-200 text-slate-400"} ${isCurrent && "ring-4 ring-orange-100 scale-110"}`}>
                                     {isCompleted ? <CheckCircle2 size={20} /> : <span className="text-sm font-black">{idx + 1}</span>}
                                   </div>
