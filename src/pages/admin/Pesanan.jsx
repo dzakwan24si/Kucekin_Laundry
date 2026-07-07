@@ -7,6 +7,7 @@ import PageHeader from "../../components/PageHeader";
 import Button from "../../components/Button";
 import Badge from "../../components/Badge";
 import Table from "../../components/Table";
+import BuatPesananModal from "../../components/BuatPesananModal";
 
 // Import Komponen Shadcn
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,6 +23,7 @@ export default function Pesanan() {
   // State Data Database
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fungsi Tarik Data
   const fetchOrders = async () => {
@@ -113,7 +115,7 @@ export default function Pesanan() {
         />
         <Button
           type="primary"
-          onClick={() => navigate("/admin/pesanan/baru")}
+          onClick={() => setIsModalOpen(true)}
           className="flex items-center gap-2"
         >
           <Plus size={20} /> Buat Pesanan Baru
@@ -228,6 +230,14 @@ export default function Pesanan() {
           </Table>
         </TabsContent>
       </Tabs>
+      <BuatPesananModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onSuccess={() => {
+          setIsModalOpen(false);
+          fetchOrders();
+        }} 
+      />
     </div>
   );
 }
